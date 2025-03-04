@@ -1,0 +1,50 @@
+CREATE TABLE fornecedor (
+    fornecedorid SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    telefone VARCHAR(20),
+    cnpj VARCHAR(18) UNIQUE NOT NULL,
+    situacao VARCHAR(50) NOT NULL,
+    databaixa DATE,
+    razaosocial VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE endereco (
+    enderecoid SERIAL PRIMARY KEY,
+    logradouro VARCHAR(255) NOT NULL,
+    numero VARCHAR(10),
+    complemento VARCHAR(255),
+    bairro VARCHAR(100),
+    cidade VARCHAR(100) NOT NULL,
+    estado VARCHAR(50) NOT NULL,
+    cep VARCHAR(20) NOT NULL,
+    pais VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE notafiscal (
+    notafiscalid SERIAL PRIMARY KEY,
+    numero VARCHAR(50) NOT NULL UNIQUE,
+    datahora TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    valortotal DECIMAL(10,2) NOT NULL,
+    enderecoid INT NOT NULL,
+    fornecedorid INT NOT NULL,
+    FOREIGN KEY (enderecoid) REFERENCES endereco(enderecoid) ON DELETE CASCADE,
+    FOREIGN KEY (fornecedorid) REFERENCES fornecedor(fornecedorid) ON DELETE CASCADE
+);
+
+CREATE TABLE produto (
+    produtoid SERIAL PRIMARY KEY,
+    descricao VARCHAR(255) NOT NULL,
+    situacao VARCHAR(50) NOT NULL,
+    preco DECIMAL(10,2)
+);
+
+CREATE TABLE itemnotafiscal (
+    itemnotafiscalid SERIAL PRIMARY KEY,
+    valorunitario DECIMAL(10,2) NOT NULL,
+    quantidade INT NOT NULL CHECK (quantidade > 0),
+    valortotal DECIMAL(10,2) NOT NULL,
+    notafiscalid INT NOT NULL,
+    produtoid INT NOT NULL,
+    FOREIGN KEY (notafiscalid) REFERENCES notafiscal(notafiscalid) ON DELETE CASCADE,
+    FOREIGN KEY (produtoid) REFERENCES produto(produtoid) ON DELETE CASCADE
+);
