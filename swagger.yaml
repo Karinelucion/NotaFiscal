@@ -1,232 +1,270 @@
 swagger: "2.0"
 info:
-  description: "This is a documentation for a API Rest using Quarkus"
+  description: "Documentação da API do projeto de Nota Fiscal"
   version: "1.0.0"
-  title: "Quarkus Social"
+  title: "Nota Fiscal API"
   termsOfService: "http://swagger.io/terms/"
   contact:
-    email: "dougllasfps@email.com"
+    email: "karinelucion04@gmail.com"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "quarkussocial.github.io"
+host: "quarkusnotafiscal.github.io"
 basePath: "/"
 tags:
-  - name: "user"
-    description: "operations about users"
-  - name: "post"
-    description: "Users posts"
-  - name: "followers"
-    description: "Users followers"
+  - name: "endereco"
+    description: "Operações do endereço"
+  - name: "fornecedor"
+    description: "Operações do fornecedor"
+  - name: "nota fiscal"
+    description: "Operações da nota fiscal"
+  - name: "produto"
+    description: "Operações do produto"
 
 paths:
-  /users:
+  /endereco:
     get:
       tags:
-        - "user"
-      summary: "List all Users"
+        - "endereco"
+      summary: "Lista todos os endereços"
       responses:
         "200":
-          description: "Ok"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/User"
+          description: "OK"
+
+  /fornecedor:
+    get:
+      tags:
+        - "fornecedor"
+      summary: "Lista todos os fornecedores"
+      responses:
+        "200":
+          description: "OK"
     post:
       tags:
-        - "user"
-      summary: "Create new User"
-      description: ""
-      operationId: "addUser"
+        - "fornecedor"
+      summary: "Cria um novo fornecedor"
       consumes:
-        - "application/json"
-      produces:
         - "application/json"
       parameters:
         - in: "body"
-          name: "User Request Data"
-          description: "User data"
+          name: "Fornecedor"
           required: true
           schema:
-            $ref: "#/definitions/CreateUserRequest"
-      responses:
-        "422":
-          description: "Invalid input"
-        "201":
-          description: "User created"
-          schema:
-            $ref: "#/definitions/User"
-
-  /users/{userId}/posts:
-    post:
-      tags:
-        - "post"
-      summary: "Create a post for a user"
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-
-      parameters:
-        - in: body
-          name: "User Post Data"
-          required: true
-          schema:
-            $ref: "#/definitions/CreatePostRequest"
-        - name: userId
-          description: the user identifier, as userId
-          in: path
-          required: true
-          type: "string"
-
-      responses:
-        "422":
-          description: "Invalid input"
-        "201":
-          description: "Post created"
-    get:
-      tags:
-        - "post"
-      summary: "Lists all posts of a user"
-      produces:
-        - "application/json"
-      parameters:
-        - name: userId
-          description: "the user identifier, as userId"
-          in: path
-          required: true
-          type: "string"
-
+            $ref: "#/definitions/Fornecedor"
       responses:
         "200":
-          description: "Ok"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/PostResponse"
+          description: "Fornecedor criado com sucesso"
 
-  /users/{userId}/followers:
+  /fornecedor/{id}:
     put:
       tags:
-        - "followers"
-      summary: "Follow a user"
+        - "fornecedor"
+      summary: "Atualiza um fornecedor pelo ID"
       parameters:
-        - name: "userId"
-          description: "the user identifier, as userId"
-          in: path
+        - name: "id"
+          in: "path"
           required: true
           type: "integer"
-
-        - name: "Follower data"
-          description: "the user identifier, as userId"
-          in: body
+        - in: "body"
+          name: "Fornecedor"
           required: true
           schema:
-            $ref: "#/definitions/FollowerRequest"
+            $ref: "#/definitions/Fornecedor"
       responses:
         "200":
-          description: "Ok"
-
-
-    get:
-      tags:
-        - "followers"
-      summary: "List followers of a user"
-      parameters:
-        - name: userId
-          description: "the user identifier, as userId"
-          in: path
-          required: true
-          type: "integer"
-
-      responses:
-        "200":
-          description: "Ok"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/FollowersPerUserResponse"
+          description: "Fornecedor atualizado com sucesso"
     delete:
       tags:
-        - "followers"
-      summary: "Unfollow a user"
+        - "fornecedor"
+      summary: "Deleta um fornecedor pelo ID"
       parameters:
-        - name: userId
-          description: "the user identifier, as userId"
-          in: path
-          required: true
-          type: "integer"
-        - name: followerId
-          description: "the follower identifier, as followerId"
-          in: query
+        - name: "id"
+          in: "path"
           required: true
           type: "integer"
       responses:
-        "204":
-          description: "Ok! No content"
+        "200":
+          description: "Fornecedor deletado com sucesso"
 
+  /notafiscal:
+    get:
+      tags:
+        - "nota fiscal"
+      summary: "Lista todas as notas fiscais"
+      responses:
+        "200":
+          description: "OK"
+    post:
+      tags:
+        - "nota fiscal"
+      summary: "Cria uma nova nota fiscal"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "NotaFiscal"
+          required: true
+          schema:
+            $ref: "#/definitions/NotaFiscal"
+      responses:
+        "200":
+          description: "Nota fiscal criada com sucesso"
+
+  /notafiscal/{id}:
+    put:
+      tags:
+        - "nota fiscal"
+      summary: "Atualiza uma nota fiscal pelo ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "NotaFiscal"
+          required: true
+          schema:
+            $ref: "#/definitions/NotaFiscal"
+      responses:
+        "200":
+          description: "Nota fiscal atualizada com sucesso"
+    delete:
+      tags:
+        - "nota fiscal"
+      summary: "Deleta uma nota fiscal pelo ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "integer"
+      responses:
+        "200":
+          description: "Nota fiscal deletada com sucesso"
+
+  /produto:
+    get:
+      tags:
+        - "produto"
+      summary: "Lista todos os produtos"
+      responses:
+        "200":
+          description: "OK"
+    post:
+      tags:
+        - "produto"
+      summary: "Cria um novo produto"
+      consumes:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "Produto"
+          required: true
+          schema:
+            $ref: "#/definitions/Produto"
+      responses:
+        "200":
+          description: "Produto criado com sucesso"
+
+  /produto/{id}:
+    put:
+      tags:
+        - "produto"
+      summary: "Atualiza um produto pelo ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "integer"
+        - in: "body"
+          name: "Produto"
+          required: true
+          schema:
+            $ref: "#/definitions/Produto"
+      responses:
+        "200":
+          description: "Produto atualizado com sucesso"
+    delete:
+      tags:
+        - "produto"
+      summary: "Deleta um produto pelo ID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          type: "integer"
+      responses:
+        "200":
+          description: "Produto deletado com sucesso"
 
 definitions:
-  CreateUserRequest:
-    type: "object"
-    properties:
-      name:
-        type: "string"
-      age:
-        type: "integer"
-        format: "int64"
-  User:
+  Endereco:
     type: "object"
     properties:
       id:
         type: "integer"
-        format: "int64"
-      name:
+      cep:
         type: "string"
-      age:
+      logradouro:
+        type: "string"
+      complemento:
+        type: "string"
+      bairro:
+        type: "string"
+      localidade:
+        type: "string"
+      uf:
+        type: "string"
+      numero:
+        type: "string"
+
+  Fornecedor:
+    type: "object"
+    properties:
+      id:
         type: "integer"
-        format: "int64"
+      razaosocial:
+        type: "string"
+      email:
+        type: "string"
+      telefone:
+        type: "string"
+      cnpj:
+        type: "string"
+      situacao:
+        type: "string"
+      databaixa:
+        type: "string"
+        format: "date"
 
-  CreatePostRequest:
+  NotaFiscal:
     type: "object"
     properties:
-      text:
+      id:
+        type: "integer"
+      numero:
         type: "string"
-
-  PostResponse:
-    type: "object"
-    properties:
-      text:
-        type: "string"
-      dateTime:
+      datahora:
         type: "string"
         format: "date-time"
+      valortotal:
+        type: "number"
+      endereco:
+        $ref: "#/definitions/Endereco"
+      fornecedor:
+        $ref: "#/definitions/Fornecedor"
+      itens:
+        type: "array"
+        items:
+          $ref: "#/definitions/Produto"
 
-  FollowerRequest:
-    type: "object"
-    properties:
-      followerId:
-        type: "integer"
-
-  FollowerResponse:
+  Produto:
     type: "object"
     properties:
       id:
         type: "integer"
-      name:
+      descricao:
         type: "string"
-
-  FollowersPerUserResponse:
-    type: "object"
-    properties:
-      followersCount:
-        type: "integer"
-      content:
-        type: "array"
-        items:
-          $ref: "#/definitions/FollowerResponse"
-
-
-
-
-
+      preco:
+        type: "number"
+      situacao:
+        type: "string"

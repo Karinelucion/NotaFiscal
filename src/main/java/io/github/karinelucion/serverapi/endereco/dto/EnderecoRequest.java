@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-public class EnderecoDTO {
+public class EnderecoRequest {
     @NotNull(message = "O cep é obrigatório")
     @Size(max = 8, message = "O tamanho do cep deve ser menor ou igual a 8 caracteres")
     private String cep;

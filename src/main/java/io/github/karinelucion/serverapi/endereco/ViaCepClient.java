@@ -7,13 +7,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-@Path("/ws")
-@RegisterRestClient(configKey = "viacep-api")
-public interface ViaCepResource {
+@RegisterRestClient(baseUri = "https://viacep.com.br/ws")
+public interface ViaCepClient {
 
     @GET
     @Path("/{cep}/json/")
-    @Produces("application/json")
-    EnderecoRequest buscarEndereco(@PathParam("cep") String cep);
+    @Produces(MediaType.APPLICATION_JSON)
+    EnderecoRequest buscarCep(@PathParam("cep") String cep);
 }

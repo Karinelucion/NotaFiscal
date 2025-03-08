@@ -1,93 +1,44 @@
-package io.github.karinelucion.serverapi.fornecedor;
+package io.github.karinelucion.serverapi.notafiscal;
 
-import io.github.karinelucion.serverapi.error.ResponseError;
-import io.github.karinelucion.serverapi.fornecedor.dto.FornecedorRequest;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.github.karinelucion.serverapi.notafiscal.dto.NotaFiscalRequest;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Set;
+import java.util.List;
 
-@Path("/fornecedor")
+@Slf4j
+@Path("/notafiscal")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class FornecedorService {
-    private FornecedorRepository repository;
-    private Validator validator;
-
+public class NotaFiscalService {
     @Inject
-    public FornecedorService(FornecedorRepository repository, Validator validator){
-        this.repository = repository;
-        this.validator = validator;
-    }
+    NotaFiscalResource notaFiscalResource;
 
     @POST
-    @Transactional
-    public Response criar(FornecedorRequest fornecedorRequest){
-        Set<ConstraintViolation<FornecedorRequest>> violations = validator.validate(fornecedorRequest);
-
-        if(!violations.isEmpty()){
-            return ResponseError.validaCriacaoDoForm(violations)
-                    .comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
-        }
-
-        Fornecedor fornecedor = new Fornecedor();
-        fornecedor.setRazaosocial(fornecedorRequest.getRazaosocial());
-        fornecedor.setEmail(fornecedorRequest.getEmail());
-        fornecedor.setCnpj(fornecedorRequest.getCnpj());
-        fornecedor.setTelefone(fornecedorRequest.getTelefone());
-        fornecedor.setSituacao(fornecedorRequest.getSituacao());
-        fornecedor.setDatabaixa(fornecedorRequest.getDatabaixa());
-
-        repository.persist(fornecedor);
-
-        return Response
-                .status(Response.Status.CREATED.getStatusCode())
-                .entity(fornecedor)
-                .build();
+    public Response criarNotaFiscal(NotaFiscalRequest dto) {
+        NotaFiscal notafiscal = notaFiscalResource.criarNotaFiscalComItem(dto);
+        return Response.status(Response.Status.CREATED).entity(notafiscal).build();
     }
 
     @GET
-    public Response listarTodosFornecedores(){
-        PanacheQuery<Fornecedor> query = repository.findAll();
-        return Response.ok(query.list()).build();
+    public List<NotaFiscal> listarTodasNotasFiscais() {
+        return notaFiscalResource.listarTodasNotasFiscais();
     }
 
     @DELETE
     @Path("{id}")
-    @Transactional
-    public Response deletarFornecedor(@PathParam("id") Long id){
-        Fornecedor fornecedor = repository.findById(id);
-
-        if(fornecedor != null){
-            repository.delete(fornecedor);
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+    public Response deletarNotaFiscal(@PathParam("id") Long id) {
+        return notaFiscalResource.deletarNotaFiscal(id);
     }
 
     @PUT
     @Path("{id}")
-    @Transactional
-    public Response atualizarFornecedor(@PathParam("id") Long id, FornecedorRequest fornecedorRequest){
-        Fornecedor fornecedor = repository.findById(id);
-
-        if(fornecedor != null){
-            fornecedor.setRazaosocial(fornecedorRequest.getRazaosocial());
-            fornecedor.setEmail(fornecedorRequest.getEmail());
-            fornecedor.setCnpj(fornecedorRequest.getCnpj());
-            fornecedor.setTelefone(fornecedorRequest.getTelefone());
-            fornecedor.setSituacao(fornecedorRequest.getSituacao());
-            fornecedor.setDatabaixa(fornecedorRequest.getDatabaixa());
-
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.NOT_FOUND).build();
+    public Response atualizarNotaFiscal(@PathParam("id") Long id, NotaFiscalRequest notaFiscalRequest) {
+        notaFiscalResource.atualizarNotaFiscal(id, notaFiscalRequest);
+        return Response.noContent().build();
     }
 
 }

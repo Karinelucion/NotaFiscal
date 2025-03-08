@@ -1,11 +1,13 @@
 package io.github.karinelucion.serverapi.produto;
 
+import io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.ItemNotaFiscal;
 import io.github.karinelucion.serverapi.produto.enums.SituacaoProdutoEnum;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,4 +31,5 @@ public class Produto {
     @NotNull
     @Enumerated(EnumType.STRING)
     private SituacaoProdutoEnum situacao;
+
 }
