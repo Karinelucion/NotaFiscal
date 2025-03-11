@@ -8,5 +8,6 @@ export const PRODUTO_ROUTES: Routes = [
     component: ProdutoHomeComponent
   },
   { path: 'novo', component: ProdutoFormComponent },
+  { path: 'editar/:id', component: ProdutoFormComponent },
 
 ]

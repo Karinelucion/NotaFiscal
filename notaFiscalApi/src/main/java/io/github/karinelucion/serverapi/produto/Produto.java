@@ -22,7 +22,7 @@ public class Produto {
 
     @NotNull
     @Column(name = "descricao")
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 254)
     private String descricao;
 
     @Column(name = "preco")

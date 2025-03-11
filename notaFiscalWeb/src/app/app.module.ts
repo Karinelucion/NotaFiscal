@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { CardModule } from 'primeng/card';
@@ -12,6 +12,7 @@ import { MessageService } from 'primeng/api';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -28,7 +29,7 @@ import { AppComponent } from './app.component';
     ButtonModule,
     ToastModule,
   ],
-  providers: [MessageService],
+  providers: [MessageService,],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

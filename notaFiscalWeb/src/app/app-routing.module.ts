@@ -13,6 +13,12 @@ const routes: Routes = [
       (m) => m.ProdutoModule
     )
   },
+  {
+    path: 'fornecedor',
+    loadChildren: () => import('./programas/fornecedor/fornecedor.module').then(
+      (m) => m.FornecedorModule
+    )
+  },
 ];
 
 @NgModule({

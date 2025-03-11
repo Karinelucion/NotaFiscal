@@ -1,28 +1,43 @@
 <app-menubar-navigation></app-menubar-navigation>
-<div class="mt-2">
-  <form
-    [formGroup]="produtoForm"
-    (ngSubmit)="handleSubmitAddProduto()"
-    >
-
+<p-card header="Cadastro de produto" styleClass="shadow-3 m-5 text-indigo-800">
+  <form [formGroup]="produtoForm" (ngSubmit)="handleSubmitProdutoAction()">
     <div class="card flex flex-column md:flex-column gap-3">
-      <input pInputText placeholder="Descrição" formControlName="descricao">
-      <input pInputText placeholder="Preço" formControlName="preco">
-      <p-checkbox formControlName="situacao" [binary]="true" label="Situação"></p-checkbox>
-      <div class="flex flex-row justify-content-center align-content-center align-items-center gap-3">
+      <input pInputText placeholder="Nome*" formControlName="descricao" />
+      <p-inputNumber
+        formControlName="preco"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+        placeholder="R$"
+        [max]="9999999"
+      >
+      </p-inputNumber>
 
+      <p-checkbox
+        formControlName="situacao"
+        [binary]="true"
+        label="Situação*"
+      ></p-checkbox>
+      <div
+        class="flex flex-row justify-content-center align-content-center align-items-center gap-3"
+      >
         <button
           pButton
-          pRipple label="Cancelar" class="p-button-secondary" (click)="router.navigate(['/produto'])"></button>
+          pRipple
+          label="Cancelar"
+          class="p-button-secondary"
+          (click)="router.navigate(['/produto'])"
+        ></button>
         <button
           pButton
           pRipple
           [disabled]="!produtoForm.valid"
           type="submit"
-          label="Concluir"
+          label="Salvar"
+          icon="pi pi-save"
           class="p-button-success"
         ></button>
       </div>
     </div>
   </form>
-</div>
+</p-card>

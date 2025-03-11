@@ -9,17 +9,4 @@ public enum SituacaoProdutoEnum {
     SituacaoProdutoEnum(String descricao) {
         this.descricao = descricao;
     }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public static SituacaoProdutoEnum fromDescricao(String descricao) {
-        for (SituacaoProdutoEnum tipo : SituacaoProdutoEnum.values()) {
-            if (tipo.getDescricao().equals(descricao)) {
-                return tipo;
-            }
-        }
-        throw new IllegalArgumentException("Descricao inválida: " + descricao);
-    }
 }

@@ -3,7 +3,6 @@ export interface ProdutoRequest {
   preco: number | null;
   situacao: string;
 }
-
 export interface Produto {
   id: number;
   situacao: string;

@@ -7,9 +7,11 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import java.util.Set;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestScoped
 public class ProdutoResource {
@@ -48,7 +50,18 @@ public class ProdutoResource {
             return repository.findAll().list();
         }
 
-        @Transactional
+        public Produto buscarProdutoPorId(Long id){
+            return repository.findById(id);
+        }
+
+
+        public List<Produto> buscarProdutoFiltro(String descricao) {
+            return repository.buscarPorDescricao(descricao);
+        }
+
+
+
+    @Transactional
         public Response deletarProduto(Long id){
             Produto produto = repository.findById(id);
 
@@ -61,6 +74,13 @@ public class ProdutoResource {
 
         @Transactional
         public Response atualizarProduto(Long id, ProdutoRequest produtoRequest){
+            Set<ConstraintViolation<ProdutoRequest>> violations = validator.validate(produtoRequest);
+
+            if(!violations.isEmpty()){
+                return ResponseError.validaCriacaoDoForm(violations)
+                        .comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+            }
+
             Produto produto = repository.findById(id);
 
             if(produto != null){
@@ -72,4 +92,6 @@ public class ProdutoResource {
             }
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+
     }

@@ -3,7 +3,10 @@ import { EditProdutoAction } from './../../model/event/EditProdutoAction';
 import { Component, Input } from '@angular/core';
 import { GetProdutosResponse } from '../../model/GetProdutoResponse';
 import { EventEmitter, Output } from '@angular/core';
-import { ProdutoEvent } from '../../model/event/enum/ProdutoEvent';
+import { Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { ProdutoService } from '../../service/produto.service';
 
 @Component({
   selector: 'app-produto-list',
@@ -13,22 +16,34 @@ import { ProdutoEvent } from '../../model/event/enum/ProdutoEvent';
 
 export class ProdutoListComponent{
   @Input() public produtos: Array<GetProdutosResponse> = []
-  @Output() public produtoEvent = new EventEmitter<DeleteProdutoAction>();
+  @Output() public produtoEvent = new EventEmitter<EditProdutoAction>();
   @Output() public deleteProdutoEvent = new EventEmitter<DeleteProdutoAction>()
 
   public produtoSelecionado!: GetProdutosResponse;
-  public addProdutoAction = ProdutoEvent.ADD_PRODUTO_ACTION;
-  public editProdutoAction = ProdutoEvent.EDIT_PRODUTO_ACTION;
+  controlePesquisa = new FormControl('');
 
-  // handleDeleteProdutoEvent(produto_id: string, produto_descricao: string): void{
-  //   if(produto_id !== '' && produto_descricao !== ''){
-  //     this.deleteProdutoEvent.emit({produto_id, produto_descricao})
-  //   }
-  // }
 
-  // handleProdutoEvent(action?: string, id?: string, produtoDescricao?: string): void{
-  //   if(action && action !== ''){
-  //     this.produtoEvent.emit({action, id, produtoDescricao})
-  //   }
-  // }
+  constructor(
+    public router: Router,
+    private produtoService: ProdutoService
+    ){
+
+      this.controlePesquisa.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap(value => this.produtoService.buscarProdutosFiltro(value || ''))
+      )
+      .subscribe(produtos => this.produtos = produtos);
+  }
+
+  handleDeleteProdutoEvent(produto_id: string, produto_descricao: string): void{
+    if(produto_id !== '' && produto_descricao !== ''){
+      this.deleteProdutoEvent.emit({produto_id, produto_descricao})
+    }
+  }
+
+  editarProduto(id: string) {
+    this.router.navigate(['/produto/editar', id]);
+  }
 }

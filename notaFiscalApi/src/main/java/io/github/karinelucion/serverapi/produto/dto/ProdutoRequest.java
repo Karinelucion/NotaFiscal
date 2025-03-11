@@ -9,8 +9,8 @@ import javax.validation.constraints.Size;
 
 @Data
 public class ProdutoRequest {
-    @NotBlank(message = "A descricao é obrigatória")
-    @Size(min = 3, max = 100, message = "O tamanho da descricao deve estar entre 3 e 100 caracteres")
+    @NotBlank(message = "A descrição é obrigatória")
+    @Size(min = 3, max = 254, message = "O tamanho da descrição deve estar entre 3 e 254 caracteres")
     private String descricao;
 
     private Float preco;

@@ -1,21 +1,21 @@
 <div class="grid">
   <div class="col-12">
-    <p-card styleClass="shadow-3 m-5 text-indigo-800" header="Produtos">
+    <p-card styleClass="shadow-3 m-5 text-indigo-800" header="Fornecedores">
       <div class="mb-3 flex align-items-center gap-3">
-        <label for="pesquisa">Buscar Produto:</label>
-        <input id="pesquisa" pInputText [formControl]="controlePesquisa" class="w-30rem p-2" placeholder="Digite o nome do produto..." />
+        <label for="pesquisa">Buscar Fornecedor:</label>
+        <input id="pesquisa" pInputText [formControl]="controlePesquisa" class="w-30rem p-2" placeholder="Digite a razao social do fornecedor..." />
       </div>
 
       <p-table
-        [value]="produtos"
-        [(selection)]="produtoSelecionado"
+        [value]="fornecedores"
+        [(selection)]="fornecedorSelecionado"
         [rows]="10"
         [paginator]="true"
         [responsive]="true"
         [tableStyle]="{ 'min-width': '100%' }"
         [rowHover]="true"
         dataKey="id"
-        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} produtos"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} fornecedores"
         [showCurrentPageReport]="true"
         sortField="id"
       >
@@ -25,12 +25,12 @@
               ID
               <p-sortIcon field="id"></p-sortIcon>
             </th>
-            <th pSortableColumn="descricao">
-              Nome
-              <p-sortIcon field="descricao"></p-sortIcon>
+            <th pSortableColumn="razaosocial">
+              Razao social
+              <p-sortIcon field="razaosocial"></p-sortIcon>
               <p-columnFilter
                 type="text"
-                field="descricao"
+                field="razaosocial"
                 display="menu"
                 matchMode="contains"
                 [showMatchModes]="false"
@@ -38,12 +38,12 @@
                 [showAddButton]="false"
               ></p-columnFilter>
             </th>
-            <th pSortableColumn="preco">
-              Preço
-              <p-sortIcon field="preco"></p-sortIcon>
+            <th pSortableColumn="cnpj">
+              CNPJ
+              <p-sortIcon field="cnpj"></p-sortIcon>
               <p-columnFilter
                 type="numeric"
-                field="preco"
+                field="cnpj"
                 display="menu"
                 matchMode="equals"
                 [showMatchModes]="false"
@@ -65,17 +65,17 @@
               ></p-columnFilter>
             </th>
             <th class="text-center">
-              <p-button label="Novo Produto" icon="pi pi-plus" routerLink="/produto/novo"></p-button>
+              <p-button label="Novo Fornecedor" icon="pi pi-plus" routerLink="/fornecedor/novo"></p-button>
             </th>
           </tr>
         </ng-template>
 
-        <ng-template pTemplate="body" let-produto>
+        <ng-template pTemplate="body" let-fornecedor>
           <tr>
-            <td>{{ produto?.id }}</td>
-            <td>{{ produto?.descricao }}</td>
-            <td>{{ produto?.preco ? (produto.preco | currency:'BRL':'symbol':'1.2-2') : '-' }}</td>
-            <td>{{ produto?.situacao }}</td>
+            <td>{{ fornecedor?.id }}</td>
+            <td>{{ fornecedor?.razaosocial }}</td>
+            <td>{{ fornecedor?.cnpj }}</td>
+            <td>{{ fornecedor?.situacao }}</td>
             <td class="text-center">
               <div class="flex gap-2 justify-content-center align-items-center">
                 <button
@@ -83,14 +83,14 @@
                   pRipple
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-warning"
-                  (click)="editarProduto(produto.id)"
+                  (click)="editarFornecedor(fornecedor.id)"
                 ></button>
                 <button
                   pButton
                   pRipple
                   icon="pi pi-trash"
                   class="p-button-rounded p-button-danger"
-                  (click)="handleDeleteProdutoEvent(produto?.id, produto?.descricao)"
+                  (click)="handleDeleteFornecedorEvent(fornecedor?.id, fornecedor?.razaosocial)"
                 ></button>
               </div>
             </td>

@@ -1,54 +1,54 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Produto, ProdutoRequest } from '../model/produto.model';
+import { Fornecedor, FornecedorRequest } from '../model/fornecedor.model';
 import { environment } from 'src/environments/environment.prod';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ProdutoService {
+export class FornecedorService {
   private readonly API_URL = environment.API_URL;
 
   constructor(private http: HttpClient) {}
 
-  listaProdutoPorId(id: number): Observable<Produto> {
-    return this.http.get<Produto>(`${this.API_URL}/produto/${id}`).pipe(
+  listaFornecedorPorId(id: number): Observable<Fornecedor> {
+    return this.http.get<Fornecedor>(`${this.API_URL}/fornecedor/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  listarTodosProdutos(): Observable<Produto[]> {
-    return this.http.get<Produto[]>(`${this.API_URL}/produto`).pipe(
+  listarTodosFornecedores(): Observable<Fornecedor[]> {
+    return this.http.get<Fornecedor[]>(`${this.API_URL}/fornecedor`).pipe(
       catchError(this.handleError)
     );
   }
 
-  criarProduto(produtoRequest: ProdutoRequest): Observable<Produto> {
-    return this.http.post<Produto>(`${this.API_URL}/produto`, produtoRequest, {
+  criarFornecedor(fornecedorRequest: FornecedorRequest): Observable<Fornecedor> {
+    return this.http.post<Fornecedor>(`${this.API_URL}/fornecedor`, fornecedorRequest, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     }).pipe(
       catchError(this.handleError)
     );
   }
 
-  atualizarProduto(id: number, produtoRequest: ProdutoRequest): Observable<Produto> {
-    return this.http.put<Produto>(`${this.API_URL}/produto/${id}`, produtoRequest, {
+  atualizarFornecedor(id: number, fornecedorRequest: FornecedorRequest): Observable<Fornecedor> {
+    return this.http.put<Fornecedor>(`${this.API_URL}/fornecedor/${id}`, fornecedorRequest, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     }).pipe(
       catchError(this.handleError)
     );
   }
 
-  deletarProduto(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/produto/${id}`).pipe(
+  deletarFornecedor(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/fornecedor/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
-  buscarProdutosFiltro(descricao: string): Observable<Produto[]> {
-    return this.http.get<Produto[]>(`${this.API_URL}/produto/pesquisar?descricao=${descricao}`).pipe(
+  buscarFornecedoresFiltro(descricao: string): Observable<Fornecedor[]> {
+    return this.http.get<Fornecedor[]>(`${this.API_URL}/fornecedor/pesquisar?descricao=${descricao}`).pipe(
       catchError(this.handleError)
     );
   }

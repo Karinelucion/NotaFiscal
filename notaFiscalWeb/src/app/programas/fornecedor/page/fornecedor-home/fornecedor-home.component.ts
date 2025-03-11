@@ -1,41 +1,41 @@
-import { DeleteProdutoAction } from './../../model/event/DeleteProdutoAction';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
-import { ProdutoService } from '../../service/produto.service';
 import { Router } from '@angular/router';
-import { GetProdutosResponse } from '../../model/GetProdutoResponse';
+import { GetFornecedorResponse } from '../../model/GetFornecedorResponse';
+import { FornecedorService } from '../../service/fornecedor.service';
+import { DeleteFornecedorAction } from '../../model/event/DeleteFornecedorAction';
 
 @Component({
-  selector: 'app-produto-home',
-  templateUrl: './produto-home.component.html',
+  selector: 'app-fornecedor-home',
+  templateUrl: './fornecedor-home.component.html',
   styleUrls: [],
 })
-export class ProdutoHomeComponent implements OnDestroy, OnInit {
+export class FornecedorHomeComponent implements OnDestroy, OnInit {
   private readonly destroy$: Subject<void> = new Subject();
-  public produtosDatas: Array<GetProdutosResponse> = [];
+  public fornecedoresDatas: Array<GetFornecedorResponse> = [];
   private ref!: DynamicDialogRef;
 
   constructor(
-    private produtoService: ProdutoService,
+    private fornecedorService: FornecedorService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.getAllProdutos();
+    this.getAllFornecedores();
   }
 
-  getAllProdutos() {
-    this.produtoService
-      .listarTodosProdutos()
+  getAllFornecedores() {
+    this.fornecedorService
+      .listarTodosFornecedores()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response.length > 0) {
-            this.produtosDatas = response;
+            this.fornecedoresDatas = response;
           }
         },
         error: (err) => {
@@ -43,7 +43,7 @@ export class ProdutoHomeComponent implements OnDestroy, OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Erro',
-            detail: 'Erro ao buscar produtos',
+            detail: 'Erro ao buscar fornecedores',
             life: 3000,
           });
           this.router.navigate(['/']);
@@ -51,46 +51,46 @@ export class ProdutoHomeComponent implements OnDestroy, OnInit {
       });
   }
 
-  handleDeleteProdutoAction(event: DeleteProdutoAction): void {
+  handleDeleteFornecedorAction(event: DeleteFornecedorAction): void {
     if (event) {
       this.confirmationService.confirm({
-        message: `Confirma a exclusao do produto: ${event?.produto_descricao}`,
+        message: `Confirma a exclusao do fornecedor: ${event?.fornecedor_razaosocial}`,
         header: 'Confirmacao de exclusao',
         icon: 'pi pi-exclamation-triangle',
         acceptLabel: 'Sim',
         rejectLabel: 'Nao',
-        accept: () => this.deleteProduto(event?.produto_id),
+        accept: () => this.deleteFornecedor(event?.fornecedor_id),
       });
     }
   }
 
-  deleteProduto(produto_id: string): void {
-    if (produto_id) {
-      this.produtoService
-        .deletarProduto(Number(produto_id))
+  deleteFornecedor(fornecedor_id: string): void {
+    if (fornecedor_id) {
+      this.fornecedorService
+        .deletarFornecedor(Number(fornecedor_id))
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
-            this.getAllProdutos();
+            this.getAllFornecedores();
             this.messageService.add({
               severity: 'success',
               summary: 'Sucesso',
-              detail: 'Produto removido com sucesso!',
+              detail: 'Fornecedor removido com sucesso!',
               life: 3000,
             });
           },
           error: (err) => {
             console.log(err);
-            this.getAllProdutos();
+            this.getAllFornecedores();
             this.messageService.add({
               severity: 'error',
               summary: 'Erro',
-              detail: 'Erro ao deletar produtos',
+              detail: 'Erro ao deletar fornecedores',
               life: 3000,
             });
           },
         });
-        this.getAllProdutos();
+        this.getAllFornecedores();
     }
   }
 

@@ -1,0 +1,73 @@
+<app-menubar-navigation></app-menubar-navigation>
+<p-card header="Cadastro de fornecedor" styleClass="shadow-3 m-5 text-indigo-800">
+  <form
+    [formGroup]="fornecedorForm"
+    (ngSubmit)="handleSubmitFornecedorAction()"
+  >
+    <div class="card flex flex-column md:flex-column gap-3">
+      <!-- Razão Social -->
+      <input
+        pInputText
+        placeholder="Razão Social*"
+        formControlName="razaosocial"
+      />
+
+      <!-- Email -->
+      <input
+        pInputText
+        placeholder="Email*"
+        formControlName="email"
+        type="email"
+      />
+
+      <!-- Telefone -->
+      <input
+      pInputText
+        placeholder="Telefone*"
+        formControlName="telefone"
+        type="tel"
+        mask="(99) 9 9999-9999"
+      >
+
+      <!-- CNPJ -->
+      <input pInputText placeholder="CNPJ*" formControlName="cnpj" />
+
+      <!-- Data Baixa -->
+      <p-calendar
+        formControlName="databaixa"
+        [showIcon]="true"
+        placeholder="Data de Baixa"
+        dateFormat="dd/mm/yy"
+
+      ></p-calendar>
+
+      <!-- Situação -->
+      <p-checkbox
+        formControlName="situacao"
+        [binary]="true"
+        label="Situação*"
+      ></p-checkbox>
+
+      <div
+        class="flex flex-row justify-content-center align-content-center align-items-center gap-3"
+      >
+        <button
+          pButton
+          pRipple
+          label="Cancelar"
+          class="p-button-secondary"
+          (click)="router.navigate(['/fornecedor'])"
+        ></button>
+        <button
+          pButton
+          pRipple
+          [disabled]="!fornecedorForm.valid"
+          type="submit"
+          label="Salvar"
+          icon="pi pi-save"
+          class="p-button-success"
+        ></button>
+      </div>
+    </div>
+  </form>
+</p-card>

@@ -1,7 +1,5 @@
 <app-menubar-navigation></app-menubar-navigation>
 <app-produto-list
 [produtos]="produtosDatas"
-
-(deleteProdutoEvent)="($event)"
-(produtoEvent)="($event)"
+(deleteProdutoEvent)="handleDeleteProdutoAction($event)"
 ></app-produto-list>

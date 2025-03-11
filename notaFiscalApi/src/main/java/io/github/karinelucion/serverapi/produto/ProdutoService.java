@@ -28,6 +28,12 @@ public class ProdutoService {
         return Response.ok(resource.listarTodosProdutos()).build();
     }
 
+    @GET
+    @Path("{id}")
+    public Response listarPordutoPorId(@PathParam("id") Long id){
+        return Response.ok(resource.buscarProdutoPorId(id)).build();
+    }
+
     @DELETE
     @Path("{id}")
     public Response deletarProduto(@PathParam("id") Long id){
@@ -39,4 +45,11 @@ public class ProdutoService {
     public Response atualizarProduto(@PathParam("id") Long id, ProdutoRequest produtoRequest){
         return resource.atualizarProduto(id, produtoRequest);
     }
+
+    @GET
+    @Path("/pesquisar")
+    public Response buscarProdutoFiltro(@QueryParam("descricao") String descricao){
+        return Response.ok(resource.buscarProdutoFiltro(descricao)).build();
+    }
+
 }
