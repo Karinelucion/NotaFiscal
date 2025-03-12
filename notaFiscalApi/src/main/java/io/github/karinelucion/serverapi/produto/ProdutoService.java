@@ -52,4 +52,10 @@ public class ProdutoService {
         return Response.ok(resource.buscarProdutoFiltro(descricao)).build();
     }
 
+    @GET
+    @Path("/ativo")
+    public Response buscarProdutoAtivo(){
+        return Response.ok(resource.buscarProdutoAtivo()).build();
+    }
+
 }

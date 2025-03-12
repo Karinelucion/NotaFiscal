@@ -3,6 +3,7 @@ package io.github.karinelucion.serverapi.fornecedor;
 import javax.enterprise.context.RequestScoped;
 import io.github.karinelucion.serverapi.fornecedor.dto.FornecedorRequest;
 import io.github.karinelucion.serverapi.error.ResponseError;
+import io.github.karinelucion.serverapi.fornecedor.enums.SituacaoFornecedorEnum;
 import io.github.karinelucion.serverapi.produto.Produto;
 
 import javax.inject.Inject;
@@ -61,7 +62,7 @@ public class FornecedorResource {
         return repository.buscarPorRazaoSocial(razaosocial);
     }
     public List<Fornecedor> buscarFornecedorAtivo() {
-        return repository.buscarPorSituacaoAtivo("ATIVO");
+        return repository.buscarPorSituacaoAtivo(SituacaoFornecedorEnum.ATIVO);
     }
 
     @Transactional

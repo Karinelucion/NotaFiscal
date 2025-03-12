@@ -1,8 +1,12 @@
 package io.github.karinelucion.serverapi.produto;
 
 import javax.enterprise.context.RequestScoped;
+
+import io.github.karinelucion.serverapi.fornecedor.Fornecedor;
 import io.github.karinelucion.serverapi.produto.dto.ProdutoRequest;
 import io.github.karinelucion.serverapi.error.ResponseError;
+import io.github.karinelucion.serverapi.produto.enums.SituacaoProdutoEnum;
+
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
@@ -58,6 +62,10 @@ public class ProdutoResource {
         public List<Produto> buscarProdutoFiltro(String descricao) {
             return repository.buscarPorDescricao(descricao);
         }
+
+         public List<Produto> buscarProdutoAtivo() {
+        return repository.buscarPorSituacaoAtivo(SituacaoProdutoEnum.ATIVO);
+    }
 
 
 

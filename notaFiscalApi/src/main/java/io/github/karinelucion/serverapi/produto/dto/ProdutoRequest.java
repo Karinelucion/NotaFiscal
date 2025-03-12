@@ -18,3 +18,4 @@ public class ProdutoRequest {
     @NotNull(message = "A situação é obrigatória")
     private SituacaoProdutoEnum situacao;
 }
+    

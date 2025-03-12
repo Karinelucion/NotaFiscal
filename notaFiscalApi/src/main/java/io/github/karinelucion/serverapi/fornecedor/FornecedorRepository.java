@@ -1,5 +1,7 @@
 package io.github.karinelucion.serverapi.fornecedor;
 
+import io.github.karinelucion.serverapi.crud.CrudRepository;
+import io.github.karinelucion.serverapi.fornecedor.enums.SituacaoFornecedorEnum;
 import io.github.karinelucion.serverapi.produto.Produto;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
@@ -7,13 +9,12 @@ import javax.enterprise.context.RequestScoped;
 import java.util.List;
 
 @RequestScoped
-public class FornecedorRepository implements PanacheRepository<Fornecedor> {
+public class FornecedorRepository extends CrudRepository<Fornecedor> {
     public List<Fornecedor> buscarPorRazaoSocial(String razaosocial) {
-        return find("LOWER(razaosocial) LIKE LOWER(?1)", "%" + razaosocial.toLowerCase() + "%").list();
+        return buscarPorValorExato("razaosocial", razaosocial);
     }
 
-    public List<Fornecedor> buscarPorSituacaoAtivo(String situacao) {
-        return find("LOWER(situacao) = LOWER(?1)", situacao.toLowerCase()).list();
+    public List<Fornecedor> buscarPorSituacaoAtivo(SituacaoFornecedorEnum situacao) {
+        return buscarPorValorExato("situacao", situacao);
     }
-
 }

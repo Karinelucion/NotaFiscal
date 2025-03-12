@@ -1,14 +1,8 @@
-<p-card
-  header="Cadastro de nota fiscal"
-  styleClass="shadow-3 m-5 text-indigo-800"
->
-  <form
-    [formGroup]="notafiscalForm"
-    (ngSubmit)="handleSubmitNotafiscalAction()"
-  >
+<p-card header="Cadastro de nota fiscal" styleClass="shadow-3 m-5 text-indigo-800">
+  <form [formGroup]="notafiscalForm" (ngSubmit)="handleSubmitNotafiscalAction()">
     <div class="card flex flex-column md:flex-column gap-3">
-      <p-fieldset legend="Identificacao">
-        <input pInputText placeholder="Numero*" formControlName="numero" />
+      <p-fieldset legend="Identificação">
+        <input pInputText placeholder="Número*" formControlName="numero" />
 
         <p-calendar
           formControlName="datahora"
@@ -30,42 +24,80 @@
 
         <p-dropdown
           [options]="fornecedores"
-          [(ngModel)]="fornecedorSelecionado"
           optionLabel="razaosocial"
           (onShow)="carregaFornecedores()"
           formControlName="fornecedor"
+          placeholder="Selecione um fornecedor"
         ></p-dropdown>
       </p-fieldset>
-      <p-fieldset legend="Endereco">
+
+      <p-fieldset legend="Endereço">
         <input pInputText placeholder="CEP*" formControlName="cep" />
-        <input
-          pInputText
-          placeholder="Logradouro*"
-          formControlName="logradouro"
-        />
-        <input
-          pInputText
-          placeholder="Complemento"
-          formControlName="complemento"
-        />
+        <input pInputText placeholder="Logradouro*" formControlName="logradouro" />
+        <input pInputText placeholder="Complemento" formControlName="complemento" />
         <input pInputText placeholder="Bairro" formControlName="bairro" />
         <input pInputText placeholder="Cidade*" formControlName="localidade" />
         <input pInputText placeholder="UF*" formControlName="uf" />
-        <input
-          pInputText
-          placeholder="Numero"
-          formControlName="numeroendereco"
-        />
+        <input pInputText placeholder="Número" formControlName="numeroendereco" />
       </p-fieldset>
-
-      <div
-        class="flex flex-row justify-content-center align-content-center align-items-center gap-3"
-      ></div>
     </div>
   </form>
 </p-card>
 
 <p-card header="Itens da nota fiscal" styleClass="shadow-3 m-5 text-indigo-800">
+  <div>
+    <form [formGroup]="itensNotaFiscalForm" class="">
+      <p-dropdown
+        [options]="produtos"
+        optionLabel="descricao"
+        placeholder="Selecione o Produto"
+        formControlName="produto"
+        (onShow)="carregaProdutos()"
+      ></p-dropdown>
+
+      <p-inputNumber
+        formControlName="valorunitario"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+        placeholder="R$"
+        [max]="9999999"
+      ></p-inputNumber>
+
+      <p-inputNumber
+        formControlName="quantidade"
+        [max]="9999"
+        mode="decimal"
+        [showButtons]="true"
+        buttonLayout="vertical"
+        spinnerMode="vertical"
+        decrementButtonClass="p-button-secondary"
+        incrementButtonClass="p-button-secondary"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+      ></p-inputNumber>
+
+      <p-inputNumber
+        formControlName="valortotal"
+        mode="currency"
+        currency="BRL"
+        locale="pt-BR"
+        placeholder="R$"
+        [max]="9999999"
+      ></p-inputNumber>
+    </form>
+
+    <button
+      pButton
+      pRipple
+      type="button"
+      label="Incluir Item"
+      icon="pi pi-plus"
+      class="p-button-success"
+      (click)="adicionarItem()"
+    ></button>
+  </div>
+
   <p-table responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
@@ -76,76 +108,34 @@
         <th>Ações</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-item let-i="rowIndex">
+
+    <ng-template pTemplate="body">
+      <ng-container *ngIf="itens.length > 0; else noItems">
+        <tr *ngFor="let item of itens; let i = index">
+          <td>{{ item.produto }}</td>
+          <td>{{ item.valorunitario }}</td>
+          <td>{{ item.quantidade }}</td>
+          <td>{{ item.valortotal }}</td>
+          <td>
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-danger"
+              (click)="excluirItem(i)"
+            ></button>
+          </td>
+        </tr>
+      </ng-container>
+    </ng-template>
+
+    <ng-template #noItems>
       <tr>
-        <td>
-          <!-- <p-dropdown
-            [options]="produtos"
-            [(ngModel)]="item.produto"
-            optionLabel="descricao"
-            placeholder="Selecione o Produto"
-          ></p-dropdown> -->
-        </td>
-        <td>
-          <p-inputNumber
-            [(ngModel)]="item.valorunitario"
-            mode="currency"
-            currency="BRL"
-            locale="pt-BR"
-            placeholder="R$"
-            [max]="9999999"
-          ></p-inputNumber>
-        </td>
-        <td>
-          <p-inputNumber
-            [(ngModel)]="item.quantidade"
-            [max]="9999"
-            mode="decimal"
-            [showButtons]="true"
-            buttonLayout="vertical"
-            spinnerMode="vertical"
-            decrementButtonClass="p-button-secondary"
-            incrementButtonClass="p-button-secondary"
-            incrementButtonIcon="pi pi-plus"
-            decrementButtonIcon="pi pi-minus"
-          ></p-inputNumber>
-        </td>
-        <td>
-          <p-inputNumber
-            [(ngModel)]="item.valortotal"
-            mode="currency"
-            currency="BRL"
-            locale="pt-BR"
-            placeholder="R$"
-            [max]="9999999"
-          ></p-inputNumber>
-        </td>
-        <td>
-          <button
-            pButton
-            pRipple
-            type="button"
-            icon="pi pi-trash"
-            class="p-button-danger"
-
-            (click)="excluirItem(i)"
-
-          ></button>
-        </td>
+        <td colspan="5" class="text-center">Não há produtos adicionados</td>
       </tr>
     </ng-template>
   </p-table>
-
-  <!-- Botão de incluir item -->
-  <button
-    pButton
-    pRipple
-    type="button"
-    label="Incluir Item"
-    icon="pi pi-plus"
-    class="p-button-success"
-    (click)="adicionarItem()"
-  ></button>
 
   <!-- Botão de salvar -->
   <button
@@ -158,4 +148,3 @@
     class="p-button-success"
   ></button>
 </p-card>
-

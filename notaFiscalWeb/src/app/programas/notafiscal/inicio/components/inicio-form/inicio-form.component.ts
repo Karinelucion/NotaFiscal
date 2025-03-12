@@ -9,6 +9,7 @@ import { NotafiscalEvent } from '../../../model/event/enum/NotafiscalEvent';
 import { NotafiscalService } from '../../../service/notafiscal.service';
 import { Itens } from '../../../model/notafiscal.model';
 import { Produto } from 'src/app/programas/produto/model/produto.model';
+import { ProdutoService } from 'src/app/programas/produto/service/produto.service';
 
 @Component({
   selector: 'app-inicio-form',
@@ -34,15 +35,19 @@ export class InicioFormComponent implements OnInit, OnDestroy {
     uf: [null, Validators.required],
     numeroendereco: [null, Validators.required],
     fornecedor: [null],
+
+
+  });
+  public itensNotaFiscalForm = this.formBuilder.group({
     produto: [null],
     valortotal: [null],
     valorunitario: [null],
     quantidade: 1,
-
-  });
+})
   public fornecedores: Fornecedor[] = [];
   public produtos: Produto[] = [];
   public fornecedorSelecionado: any;
+  public produtoSelecionado: any;
 
   public itens = [
     {
@@ -59,7 +64,8 @@ export class InicioFormComponent implements OnInit, OnDestroy {
     public router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
-    private fornecedorService: FornecedorService
+    private fornecedorService: FornecedorService,
+    private produtoService: ProdutoService
   ) {}
 
   ngOnInit(): void {
@@ -173,6 +179,25 @@ export class InicioFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (fornecedores) => {
           this.fornecedores = fornecedores;
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: err.message,
+            life: 3000,
+          });
+        },
+      });
+  }
+
+  carregaProdutos(): void {
+    this.produtoService
+      .buscarProdutoAtivo()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (produtos) => {
+          this.produtos = produtos;
         },
         error: (err) => {
           this.messageService.add({
