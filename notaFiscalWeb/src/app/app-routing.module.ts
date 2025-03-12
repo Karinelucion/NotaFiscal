@@ -1,10 +1,12 @@
+import { NotafiscalModule } from './programas/notafiscal/notafiscal.module';
+import { Notafiscal } from './programas/notafiscal/model/notafiscal.model';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '',
+    redirectTo: '/notafiscal/inicio',
     pathMatch: 'full',
   },
   {
@@ -19,6 +21,9 @@ const routes: Routes = [
       (m) => m.FornecedorModule
     )
   },
+  { path: 'notafiscal', loadChildren: () => import('./programas/notafiscal/notafiscal.module').then(
+    (m) => m.NotafiscalModule
+  )},
 ];
 
 @NgModule({

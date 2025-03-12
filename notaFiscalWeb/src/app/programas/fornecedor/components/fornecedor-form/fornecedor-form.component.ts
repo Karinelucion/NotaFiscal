@@ -21,10 +21,10 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
   public fornecedorAction!: { event: FornecedorEvent };
   public fornecedorForm = this.formBuilder.group({
     razaosocial: ['', Validators.required],
-    email:[''],
-    telefone: [''],
-    cnpj: [''],
-    databaixa: [''],
+    email:['', Validators.required],
+    telefone: [null],
+    cnpj: ['', Validators.required],
+    databaixa: [null],
     situacao: [true, Validators.required]
   });
 
@@ -67,28 +67,13 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     if (this.fornecedorForm?.value && this.fornecedorForm?.valid) {
       const fornecedorId = this.route.snapshot.paramMap.get('id');
 
-      // Obter a data do formulário, que pode ser uma string ou um objeto Date
-      let databaixaString = this.fornecedorForm.value.databaixa;
-
-      // Verificar se 'databaixa' é uma string ou um objeto Date
-      if (databaixaString instanceof Date) {
-        // Se for um objeto Date, converta para o formato 'yyyy-MM-dd'
-        const year = databaixaString.getFullYear();
-        const month = String(databaixaString.getMonth() + 1).padStart(2, '0');
-        const day = String(databaixaString.getDate()).padStart(2, '0');
-        databaixaString = `${year}-${month}-${day}`;  // Exemplo: '2025-03-14'
-      } else if (typeof databaixaString === 'string') {
-        // Se for uma string no formato 'dd/MM/yyyy', converta para 'yyyy-MM-dd'
-        const [day, month, year] = databaixaString.split('/'); // 'dd/MM/yyyy'
-        databaixaString = `${year}-${month}-${day}`;  // 'yyyy-MM-dd'
-      }
 
       const fornecedorData = {
         razaosocial: this.fornecedorForm.value.razaosocial as string,
         email: this.fornecedorForm.value.email as string,
         telefone: this.fornecedorForm.value.telefone as string,
         cnpj: this.fornecedorForm.value.cnpj as string,
-        databaixa: databaixaString, // Enviar no formato 'yyyy-MM-dd' como string
+        databaixa: this.getDataSemHora(),
         situacao: this.fornecedorForm.value.situacao ? 'ATIVO' : 'INATIVO',
       };
 
@@ -129,9 +114,15 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  getDataSemHora(): string {
+    const data: Date = this.fornecedorForm.get('databaixa')?.value;
+    if (data) {
+      const dataSemHora = new Date(data.getFullYear(), data.getMonth(), data.getDate());
 
-
-
+      return this.datePipe.transform(dataSemHora, 'yyyy-MM-dd')!;
+    }
+    return '';
+  }
   setFornecedor(
     fornecedor_razaosocial: string,
     fornecedor_email: string,
@@ -140,13 +131,14 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     fornecedor_databaixa: Date,
     fornecedor_situacao: string
   ) {
-    const formattedDate = this.datePipe.transform(fornecedor_databaixa, 'dd/MM/yyyy');
+    //const formattedDate = this.datePipe.transform(fornecedor_databaixa, 'dd/MM/yyyy');
+
     this.fornecedorForm.setValue({
       razaosocial: fornecedor_razaosocial,
       email: fornecedor_email,
       telefone: fornecedor_telefone,
       cnpj: fornecedor_cnpj,
-      databaixa: formattedDate, // Exibindo a data formatada
+      databaixa: fornecedor_databaixa,
       situacao: fornecedor_situacao === 'ATIVO'
     });
   }

@@ -3,6 +3,8 @@ package io.github.karinelucion.serverapi.fornecedor;
 import javax.enterprise.context.RequestScoped;
 import io.github.karinelucion.serverapi.fornecedor.dto.FornecedorRequest;
 import io.github.karinelucion.serverapi.error.ResponseError;
+import io.github.karinelucion.serverapi.produto.Produto;
+
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
@@ -51,6 +53,17 @@ public class FornecedorResource {
         return repository.findAll().list();
     }
 
+    public Fornecedor buscarFornecedorPorId(Long id){
+        return repository.findById(id);
+    }
+
+    public List<Fornecedor> buscarFornecedorFiltro(String razaosocial) {
+        return repository.buscarPorRazaoSocial(razaosocial);
+    }
+    public List<Fornecedor> buscarFornecedorAtivo() {
+        return repository.buscarPorSituacaoAtivo("ATIVO");
+    }
+
     @Transactional
     public Response deletarFornecedor(Long id){
         Fornecedor fornecedor = repository.findById(id);
@@ -64,6 +77,13 @@ public class FornecedorResource {
 
     @Transactional
     public Response atualizarFornecedor(Long id, FornecedorRequest fornecedorRequest){
+        Set<ConstraintViolation<FornecedorRequest>> violations = validator.validate(fornecedorRequest);
+
+        if(!violations.isEmpty()){
+            return ResponseError.validaCriacaoDoForm(violations)
+                    .comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+        }
+
         Fornecedor fornecedor = repository.findById(id);
 
         if(fornecedor != null){

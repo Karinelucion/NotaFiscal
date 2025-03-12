@@ -53,6 +53,12 @@ export class FornecedorService {
     );
   }
 
+  buscarFornecedorAtivo(): Observable<Fornecedor[]> {
+    return this.http.get<Fornecedor[]>(`${this.API_URL}/fornecedor/ativo`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocorreu um erro desconhecido.';
 

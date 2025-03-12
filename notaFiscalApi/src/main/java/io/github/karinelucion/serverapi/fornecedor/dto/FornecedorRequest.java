@@ -17,7 +17,6 @@ public class FornecedorRequest {
     @Size(min = 3, max = 100, message = ("O tamanho do email deve estar entre 3 e 100 caracteres"))
     private String email;
 
-    @Size(min = 3, max = 20, message = ("O tamanho do telefone deve estar entre 3 e 20 caracteres"))
     private String telefone;
 
     @NotBlank(message = "O cnpj é obrigatório")

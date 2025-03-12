@@ -1,0 +1,161 @@
+<p-card
+  header="Cadastro de nota fiscal"
+  styleClass="shadow-3 m-5 text-indigo-800"
+>
+  <form
+    [formGroup]="notafiscalForm"
+    (ngSubmit)="handleSubmitNotafiscalAction()"
+  >
+    <div class="card flex flex-column md:flex-column gap-3">
+      <p-fieldset legend="Identificacao">
+        <input pInputText placeholder="Numero*" formControlName="numero" />
+
+        <p-calendar
+          formControlName="datahora"
+          [showIcon]="true"
+          [showTime]="true"
+          [hourFormat]="'24'"
+          placeholder="Data e hora"
+          dateFormat="dd/mm/yy"
+        ></p-calendar>
+
+        <p-inputNumber
+          formControlName="valortotalnota"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          placeholder="R$"
+          [max]="9999999"
+        ></p-inputNumber>
+
+        <p-dropdown
+          [options]="fornecedores"
+          [(ngModel)]="fornecedorSelecionado"
+          optionLabel="razaosocial"
+          (onShow)="carregaFornecedores()"
+          formControlName="fornecedor"
+        ></p-dropdown>
+      </p-fieldset>
+      <p-fieldset legend="Endereco">
+        <input pInputText placeholder="CEP*" formControlName="cep" />
+        <input
+          pInputText
+          placeholder="Logradouro*"
+          formControlName="logradouro"
+        />
+        <input
+          pInputText
+          placeholder="Complemento"
+          formControlName="complemento"
+        />
+        <input pInputText placeholder="Bairro" formControlName="bairro" />
+        <input pInputText placeholder="Cidade*" formControlName="localidade" />
+        <input pInputText placeholder="UF*" formControlName="uf" />
+        <input
+          pInputText
+          placeholder="Numero"
+          formControlName="numeroendereco"
+        />
+      </p-fieldset>
+
+      <div
+        class="flex flex-row justify-content-center align-content-center align-items-center gap-3"
+      ></div>
+    </div>
+  </form>
+</p-card>
+
+<p-card header="Itens da nota fiscal" styleClass="shadow-3 m-5 text-indigo-800">
+  <p-table responsiveLayout="scroll">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Produto</th>
+        <th>Preço/un</th>
+        <th>Quantidade</th>
+        <th>Valor Total</th>
+        <th>Ações</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-i="rowIndex">
+      <tr>
+        <td>
+          <!-- <p-dropdown
+            [options]="produtos"
+            [(ngModel)]="item.produto"
+            optionLabel="descricao"
+            placeholder="Selecione o Produto"
+          ></p-dropdown> -->
+        </td>
+        <td>
+          <p-inputNumber
+            [(ngModel)]="item.valorunitario"
+            mode="currency"
+            currency="BRL"
+            locale="pt-BR"
+            placeholder="R$"
+            [max]="9999999"
+          ></p-inputNumber>
+        </td>
+        <td>
+          <p-inputNumber
+            [(ngModel)]="item.quantidade"
+            [max]="9999"
+            mode="decimal"
+            [showButtons]="true"
+            buttonLayout="vertical"
+            spinnerMode="vertical"
+            decrementButtonClass="p-button-secondary"
+            incrementButtonClass="p-button-secondary"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus"
+          ></p-inputNumber>
+        </td>
+        <td>
+          <p-inputNumber
+            [(ngModel)]="item.valortotal"
+            mode="currency"
+            currency="BRL"
+            locale="pt-BR"
+            placeholder="R$"
+            [max]="9999999"
+          ></p-inputNumber>
+        </td>
+        <td>
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-trash"
+            class="p-button-danger"
+
+            (click)="excluirItem(i)"
+
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Botão de incluir item -->
+  <button
+    pButton
+    pRipple
+    type="button"
+    label="Incluir Item"
+    icon="pi pi-plus"
+    class="p-button-success"
+    (click)="adicionarItem()"
+  ></button>
+
+  <!-- Botão de salvar -->
+  <button
+    pButton
+    pRipple
+    [disabled]="!notafiscalForm.valid"
+    type="submit"
+    label="Salvar"
+    icon="pi pi-save"
+    class="p-button-success"
+  ></button>
+</p-card>
+

@@ -21,16 +21,16 @@
       />
 
       <!-- Telefone -->
-      <input
-      pInputText
-        placeholder="Telefone*"
+      <p-inputMask
+        pInputMask
+        placeholder="Telefone"
         formControlName="telefone"
         type="tel"
-        mask="(99) 9 9999-9999"
-      >
+        mask="(**) * ****-****"
+      ></p-inputMask>
 
       <!-- CNPJ -->
-      <input pInputText placeholder="CNPJ*" formControlName="cnpj" />
+      <p-inputMask placeholder="CNPJ*" formControlName="cnpj" mask="**.***.***/****-**"></p-inputMask>
 
       <!-- Data Baixa -->
       <p-calendar

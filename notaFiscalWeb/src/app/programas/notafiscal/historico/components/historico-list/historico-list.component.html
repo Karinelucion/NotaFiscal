@@ -1,0 +1,103 @@
+<div class="grid">
+  <div class="col-12">
+    <p-card styleClass="shadow-3 m-5 text-indigo-800" header="Notas fiscais">
+      <div class="mb-3 flex align-items-center gap-3">
+        <label for="pesquisa">Buscar Nota fiscal:</label>
+        <input id="pesquisa" pInputText [formControl]="controlePesquisa" class="w-30rem p-2" placeholder="Digite o numero da Nota fiscal..." />
+      </div>
+
+      <p-table
+        [value]="notasfiscais"
+        [(selection)]="notafiscalSelecionado"
+        [rows]="10"
+        [paginator]="true"
+        [responsive]="true"
+        [tableStyle]="{ 'min-width': '100%' }"
+        [rowHover]="true"
+        dataKey="id"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} notas fiscais"
+        [showCurrentPageReport]="true"
+        sortField="id"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id">
+              ID
+              <p-sortIcon field="id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="numero">
+              Numero
+              <p-sortIcon field="numero"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="numero"
+                display="menu"
+                matchMode="contains"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th pSortableColumn="datahora">
+              Data e hora
+              <p-sortIcon field="datahora"></p-sortIcon>
+              <p-columnFilter
+                type="numeric"
+                field="datahora"
+                display="menu"
+                matchMode="equals"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th pSortableColumn="valortotal">
+              Valor total
+              <p-sortIcon field="valortotal"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="valortotal"
+                display="menu"
+                matchMode="contains"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th class="text-center">
+              Acoes
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-notafiscal>
+          <tr>
+            <td>{{ notafiscal?.id }}</td>
+            <td>{{ notafiscal?.numero }}</td>
+            <td>{{ notafiscal?.datahora }}</td>
+            <td>{{ notafiscal?.valortotal ? (notafiscal.valortotal | currency:'BRL':'symbol':'1.2-2') : '-' }}td>
+            <td class="text-center">
+              <div class="flex gap-2 justify-content-center align-items-center">
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-warning"
+                  (click)="editarNotafiscal(notafiscal.id)"
+                ></button>
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  (click)="handleDeleteNotafiscalEvent(notafiscal?.id, notafiscal?.numero)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+  <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+</div>

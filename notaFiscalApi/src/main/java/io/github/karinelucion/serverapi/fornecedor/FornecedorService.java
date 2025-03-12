@@ -38,4 +38,22 @@ public class FornecedorService {
     public Response atualizarFornecedor(@PathParam("id") Long id, FornecedorRequest fornecedorRequest){
         return resource.atualizarFornecedor(id, fornecedorRequest);
     }
+
+    @GET
+    @Path("{id}")
+    public Response listarFornecedorPorId(@PathParam("id") Long id){
+        return Response.ok(resource.buscarFornecedorPorId(id)).build();
+    }
+
+    @GET
+    @Path("/pesquisar")
+    public Response buscarFornecedorFiltro(@QueryParam("razaosocial") String razaosocial){
+        return Response.ok(resource.buscarFornecedorFiltro(razaosocial)).build();
+    }
+
+    @GET
+    @Path("/ativo")
+    public Response buscarFornecedorAtivo(){
+        return Response.ok(resource.buscarFornecedorAtivo()).build();
+    }
 }

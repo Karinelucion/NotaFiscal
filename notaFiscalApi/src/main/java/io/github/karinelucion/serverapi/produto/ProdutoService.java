@@ -30,7 +30,7 @@ public class ProdutoService {
 
     @GET
     @Path("{id}")
-    public Response listarPordutoPorId(@PathParam("id") Long id){
+    public Response listarProdutoPorId(@PathParam("id") Long id){
         return Response.ok(resource.buscarProdutoPorId(id)).build();
     }
 

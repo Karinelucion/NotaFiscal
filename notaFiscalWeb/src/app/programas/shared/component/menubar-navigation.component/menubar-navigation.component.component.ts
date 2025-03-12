@@ -14,13 +14,13 @@ export class MenubarNavigationComponent {
       {
         label: 'Nota fiscal',
         icon: 'pi pi-file',
-        routerLink: '',
+        routerLink: '/notafiscal/inicio',
         routerLinkActiveOptions: { exact: true }
       },
       {
         label: 'Histórico',
         icon: 'pi pi-history',
-        routerLink: 'notafiscal',
+        routerLink: '/notafiscal/historico',
         routerLinkActiveOptions: { exact: true }
       },
       {

@@ -31,7 +31,6 @@ public class Fornecedor {
     private String email;
 
     @Column(name = "telefone")
-    @Size(min = 3, max = 20)
     private String telefone;
 
     @NotNull
@@ -41,6 +40,7 @@ public class Fornecedor {
 
     @NotNull
     @Column(name = "situacao")
+    @Enumerated(EnumType.STRING)
     private SituacaoFornecedorEnum situacao;
 
     @Column(name = "databaixa")
