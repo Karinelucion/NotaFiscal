@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
@@ -52,6 +52,6 @@ import {FieldsetModule} from 'primeng/fieldset';
     CalendarModule,
     FieldsetModule
   ],
-  providers: [DialogService, ConfirmationService]
+  providers: [DialogService, ConfirmationService, DatePipe]
 })
 export class NotafiscalModule { }

@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { FornecedorService } from '../../service/fornecedor.service';
 import { FornecedorEvent } from '../../model/event/enum/FornecedorEvent';
 import { DatePipe } from '@angular/common';
+import { DateService } from 'src/app/utils/date/date.service';
 
 @Component({
   selector: 'app-fornecedor-form',
@@ -34,7 +35,8 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     public router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private dateService: DateService
   ) {}
 
   ngOnInit(): void {
@@ -73,7 +75,7 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
         email: this.fornecedorForm.value.email as string,
         telefone: this.fornecedorForm.value.telefone as string,
         cnpj: this.fornecedorForm.value.cnpj as string,
-        databaixa: this.getDataSemHora(),
+        databaixa: this.dateService.getDataSemHora(this.fornecedorForm, "databaixa"),
         situacao: this.fornecedorForm.value.situacao ? 'ATIVO' : 'INATIVO',
       };
 
@@ -114,15 +116,7 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  getDataSemHora(): string {
-    const data: Date = this.fornecedorForm.get('databaixa')?.value;
-    if (data) {
-      const dataSemHora = new Date(data.getFullYear(), data.getMonth(), data.getDate());
 
-      return this.datePipe.transform(dataSemHora, 'yyyy-MM-dd')!;
-    }
-    return '';
-  }
   setFornecedor(
     fornecedor_razaosocial: string,
     fornecedor_email: string,
@@ -131,7 +125,6 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     fornecedor_databaixa: Date,
     fornecedor_situacao: string
   ) {
-    //const formattedDate = this.datePipe.transform(fornecedor_databaixa, 'dd/MM/yyyy');
 
     this.fornecedorForm.setValue({
       razaosocial: fornecedor_razaosocial,

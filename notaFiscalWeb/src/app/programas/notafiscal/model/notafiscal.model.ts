@@ -3,7 +3,7 @@ import { Produto } from "../../produto/model/produto.model";
 
 export interface NotafiscalRequest {
   numero: string;
-  datahora: Date;
+  datahora: string;
   valortotalnota: number;
   enderecoid: number;
   fornecedorid: number;

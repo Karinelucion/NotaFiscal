@@ -13,7 +13,7 @@
           >
           <input pInputText placeholder="NF-XXXX" formControlName="numero" />
         </div>
-        <div class="input-container col-2">
+        <div class="input-container col-3">
           <label for="datahora"
             >Data e hora<span [ngStyle]="{ color: 'var(--red-700)' }"
               >*</span
@@ -140,7 +140,7 @@
           (onBlur)="calcularValorTotal()"
         ></p-inputNumber>
       </div>
-      <div class="input-container col-2">
+      <div class="input-container col-3">
         <label for="quantidade"
           >Quantidade<span [ngStyle]="{ color: 'var(--red-700)' }"
             >*</span
@@ -211,7 +211,7 @@
     <ng-template pTemplate="body" pTemplate="body" let-item>
       <ng-container *ngIf="itens.length > 0" >
         <tr >
-          <td>{{ item.produto }}</td>
+          <td>{{ item.produto.descricao }}</td>
           <td>
             {{
               item.valorunitario

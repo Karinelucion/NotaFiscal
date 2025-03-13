@@ -11,6 +11,8 @@ import { Itens, ItensRequest, NotafiscalRequest } from '../../../model/notafisca
 import { Produto } from 'src/app/programas/produto/model/produto.model';
 import { ProdutoService } from 'src/app/programas/produto/service/produto.service';
 import { EnderecoService } from 'src/app/programas/endereco/endereco.service';
+import { DateService } from 'src/app/utils/date/date.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-inicio-form',
@@ -59,7 +61,9 @@ export class InicioFormComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private fornecedorService: FornecedorService,
     private produtoService: ProdutoService,
-    private enderecoService: EnderecoService
+    private enderecoService: EnderecoService,
+    private dateService: DateService,
+    private datePipe:DatePipe
   ) {}
 
   ngOnInit(): void {
@@ -77,7 +81,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
               notafiscal.valortotal ? String(notafiscal.valortotal) : null,
               notafiscal.endereco.id,
               notafiscal.fornecedor.id,
-              Array.isArray(notafiscal.itens) ? notafiscal.itens : [notafiscal.itens] 
+              Array.isArray(notafiscal.itens) ? notafiscal.itens : [notafiscal.itens]
             );
             this.notafiscalAction = {
               event: NotafiscalEvent.EDIT_NOTAFISCAL_ACTION,
@@ -103,7 +107,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
 
       const notafiscalData: NotafiscalRequest = {
         numero: this.notafiscalForm.value.numero,
-        datahora: new Date(this.notafiscalForm.value.datahora), // Convertendo para Date, se necessário
+        datahora: this.dateService.getDataHoraSemFuso(this.notafiscalForm, "datahora") , // Convertendo para Date, se necessário
         valortotalnota: this.notafiscalForm.value.valortotalnota,
         enderecoid: this.notafiscalForm.value.endereco,  // ID do endereço
         fornecedorid: this.fornecedorSelecionado ? this.fornecedorSelecionado.id : this.notafiscalForm.value.fornecedor.id,  // Verifica se o fornecedor foi selecionado
