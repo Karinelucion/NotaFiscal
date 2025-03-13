@@ -4,10 +4,10 @@ import { Produto } from "../../produto/model/produto.model";
 export interface NotafiscalRequest {
   numero: string;
   datahora: Date;
-  valortotal: number;
+  valortotalnota: number;
   enderecoid: number;
   fornecedorid: number;
-  itens: Itens;
+  itens: ItensRequest[]
 }
 export interface Notafiscal {
   id: number;
@@ -30,11 +30,18 @@ export interface Endereco {
   numero: string;
 }
 
+export interface ItensRequest {
+  valorunitario: number;
+  quantidade: number;
+  valortotal: number;
+  produto: Produto;
+}
+
+
 export interface Itens {
   id: number;
   valorunitario: number;
   quantidade: number;
   valortotal: number;
   produto: Produto;
-  notaFiscal: Notafiscal;
 }

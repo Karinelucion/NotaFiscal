@@ -1,73 +1,88 @@
 <app-menubar-navigation></app-menubar-navigation>
-<p-card header="Cadastro de fornecedor" styleClass="shadow-3 m-5 text-indigo-800">
+<p-card
+  header="Cadastro de fornecedor"
+  styleClass="shadow-3 m-5 text-indigo-800"
+>
   <form
     [formGroup]="fornecedorForm"
     (ngSubmit)="handleSubmitFornecedorAction()"
   >
-    <div class="card flex flex-column md:flex-column gap-3">
-      <!-- Razão Social -->
-      <input
-        pInputText
-        placeholder="Razão Social*"
-        formControlName="razaosocial"
-      />
-
-      <!-- Email -->
-      <input
-        pInputText
-        placeholder="Email*"
-        formControlName="email"
-        type="email"
-      />
-
-      <!-- Telefone -->
-      <p-inputMask
-        pInputMask
-        placeholder="Telefone"
-        formControlName="telefone"
-        type="tel"
-        mask="(**) * ****-****"
-      ></p-inputMask>
-
-      <!-- CNPJ -->
-      <p-inputMask placeholder="CNPJ*" formControlName="cnpj" mask="**.***.***/****-**"></p-inputMask>
-
-      <!-- Data Baixa -->
-      <p-calendar
-        formControlName="databaixa"
-        [showIcon]="true"
-        placeholder="Data de Baixa"
-        dateFormat="dd/mm/yy"
-
-      ></p-calendar>
-
-      <!-- Situação -->
-      <p-checkbox
-        formControlName="situacao"
-        [binary]="true"
-        label="Situação*"
-      ></p-checkbox>
-
-      <div
-        class="flex flex-row justify-content-center align-content-center align-items-center gap-3"
-      >
-        <button
-          pButton
-          pRipple
-          label="Cancelar"
-          class="p-button-secondary"
-          (click)="router.navigate(['/fornecedor'])"
-        ></button>
-        <button
-          pButton
-          pRipple
-          [disabled]="!fornecedorForm.valid"
-          type="submit"
-          label="Salvar"
-          icon="pi pi-save"
-          class="p-button-success"
-        ></button>
+    <div class="card grid gap-3">
+      <div class="input-container col-12">
+        <label for="razaosocial"
+          >Razão Social
+          <span [ngStyle]="{ color: 'var(--red-700)' }">*</span>
+        </label>
+        <input pInputText formControlName="razaosocial"/>
+    </div>
+      <div class="input-container col-6">
+        <label for="email"
+          >E-mail
+          <span [ngStyle]="{ color: 'var(--red-700)' }">*</span>
+        </label>
+        <input pInputText formControlName="email" type="email" />
       </div>
+      <div class="input-container col-4">
+        <label for="telefone">Telefone </label>
+        <p-inputMask
+          pInputMask
+          placeholder="(__) _ ____-____"
+          formControlName="telefone"
+          type="tel"
+          mask="(**) * ****-****"
+        ></p-inputMask>
+      </div>
+      <div class="input-container col-2 sm:col-12">
+        <label for="cnpj"
+          >CNPJ
+          <span [ngStyle]="{ color: 'var(--red-700)' }">*</span>
+        </label>
+        <p-inputMask
+          placeholder="__.___.___/____-__"
+          formControlName="cnpj"
+          mask="**.***.***/****-**"
+        ></p-inputMask>
+      </div>
+      <div class="input-container col-2 sm:col-12">
+        <label for="databaixa"
+          >Data de baixa
+          <span [ngStyle]="{ color: 'var(--red-700)' }">*</span>
+        </label>
+        <p-calendar
+          formControlName="databaixa"
+          [showIcon]="true"
+          placeholder="Data de Baixa"
+          dateFormat="dd/mm/yy"
+        ></p-calendar>
+      </div>
+      <div class="input-container col-1">
+        <label for="situacao"
+          >Situação
+          <span [ngStyle]="{ color: 'var(--red-700)' }">*</span>
+        </label>
+        <p-checkbox
+          formControlName="situacao"
+          [binary]="true"
+        ></p-checkbox>
+      </div>
+    </div>
+    <div class="row flex flex-row justify-content-center align-content-center align-items-center gap-3">
+      <button
+        pButton
+        pRipple
+        label="Cancelar"
+        class="p-button-secondary"
+        (click)="router.navigate(['/fornecedor'])"
+      ></button>
+      <button
+        pButton
+        pRipple
+        [disabled]="!fornecedorForm.valid"
+        type="submit"
+        label="Salvar"
+        icon="pi pi-save"
+        class="p-button-success"
+      ></button>
     </div>
   </form>
 </p-card>

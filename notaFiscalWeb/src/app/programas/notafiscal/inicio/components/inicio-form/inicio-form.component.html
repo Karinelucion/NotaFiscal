@@ -1,104 +1,203 @@
-<p-card header="Cadastro de nota fiscal" styleClass="shadow-3 m-5 text-indigo-800">
-  <form [formGroup]="notafiscalForm" (ngSubmit)="handleSubmitNotafiscalAction()">
-    <div class="card flex flex-column md:flex-column gap-3">
-      <p-fieldset legend="Identificação">
-        <input pInputText placeholder="Número*" formControlName="numero" />
+<p-card
+  header="Cadastro de nota fiscal"
+  styleClass="shadow-3 m-5 text-indigo-800"
+>
+  <form
+    [formGroup]="notafiscalForm"
+  >
+    <p-fieldset legend="Identificação" class="m-2">
+      <div class="card grid gap-3">
+        <div class="input-container col-2">
+          <label for="numero"
+            >Número<span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
+          >
+          <input pInputText placeholder="NF-XXXX" formControlName="numero" />
+        </div>
+        <div class="input-container col-2">
+          <label for="datahora"
+            >Data e hora<span [ngStyle]="{ color: 'var(--red-700)' }"
+              >*</span
+            ></label
+          >
+          <p-calendar
+            formControlName="datahora"
+            [showIcon]="true"
+            [showTime]="true"
+            [hourFormat]="'24'"
+            placeholder="Data e hora"
+            dateFormat="dd/mm/yy"
+          ></p-calendar>
+        </div>
+        <div class="input-container col-2">
+          <label for="datahora"
+            >Valor total<span [ngStyle]="{ color: 'var(--red-700)' }"
+              >*</span
+            ></label
+          >
+          <p-inputNumber
+            formControlName="valortotalnota"
+            mode="currency"
+            currency="BRL"
+            locale="pt-BR"
+            placeholder="R$"
+            [disabled]="true"
+          ></p-inputNumber>
+        </div>
+        <div class="input-container col-4">
+          <label for="fornecedor"
+            >Fornecedor<span [ngStyle]="{ color: 'var(--red-700)' }"
+              >*</span
+            ></label
+          >
+          <p-dropdown
+            [options]="fornecedores"
+            optionLabel="razaosocial"
+            (onShow)="carregaFornecedores()"
+            formControlName="fornecedor"
+            placeholder="Selecione um fornecedor"
+          ></p-dropdown>
+        </div>
+      </div>
+    </p-fieldset>
+    <p-fieldset legend="Endereço">
+      <div class="card grid gap-3">
+        <div class="input-container col-2">
+          <label for="cep"
+            >CEP<span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
+          >
+          <p-inputMask
+            placeholder="__.___-___"
+            formControlName="cep"
+            mask="**.***-***"
+            (onComplete)="buscaEnderecoPorCep()"
+          ></p-inputMask>
+        </div>
+        <div class="input-container col-1">
+          <label for="uf"
+            >UF<span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
+          >
+          <input pInputText formControlName="uf" />
+        </div>
+        <div class="input-container col-4">
+          <label for="localidade"
+            >Cidade<span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
+          >
+          <input pInputText formControlName="localidade" />
+        </div>
+        <div class="input-container col-4">
+          <label for="logradouro"
+            >Logradouro
+            <span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
+          >
+          <input pInputText formControlName="logradouro" />
+        </div>
+        <div class="input-container col-4">
+          <label for="complemento">Complemento</label>
+          <input pInputText formControlName="complemento" />
+        </div>
+        <div class="input-container col-4">
+          <label for="bairro">Bairro</label>
+          <input pInputText formControlName="bairro" />
+        </div>
+        <div class="input-container col-2">
+          <label for="numeroendereco">Número</label>
+          <input pInputText formControlName="numeroendereco" />
+        </div>
+      </div>
+    </p-fieldset>
+  </form>
+</p-card>
 
-        <p-calendar
-          formControlName="datahora"
-          [showIcon]="true"
-          [showTime]="true"
-          [hourFormat]="'24'"
-          placeholder="Data e hora"
-          dateFormat="dd/mm/yy"
-        ></p-calendar>
-
+<p-card header="Itens da nota fiscal" styleClass="shadow-3 m-5 text-indigo-800">
+  <form [formGroup]="itensNotaFiscalForm">
+    <div class="card grid gap-3">
+      <div class="input-container col-2">
+        <label for="produto"
+          >Produto<span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
+        >
+        <p-dropdown
+          [options]="produtos"
+          optionLabel="descricao"
+          placeholder="Selecione o Produto"
+          formControlName="produto"
+          (onShow)="carregaProdutos()"
+          (onChange)="onProdutoChange()"
+        ></p-dropdown>
+      </div>
+      <div class="input-container col-2">
+        <label for="valorunitario"
+          >Valor unitario<span [ngStyle]="{ color: 'var(--red-700)' }"
+            >*</span
+          ></label
+        >
         <p-inputNumber
-          formControlName="valortotalnota"
+          formControlName="valorunitario"
           mode="currency"
           currency="BRL"
           locale="pt-BR"
           placeholder="R$"
           [max]="9999999"
+          (onBlur)="calcularValorTotal()"
         ></p-inputNumber>
-
-        <p-dropdown
-          [options]="fornecedores"
-          optionLabel="razaosocial"
-          (onShow)="carregaFornecedores()"
-          formControlName="fornecedor"
-          placeholder="Selecione um fornecedor"
-        ></p-dropdown>
-      </p-fieldset>
-
-      <p-fieldset legend="Endereço">
-        <input pInputText placeholder="CEP*" formControlName="cep" />
-        <input pInputText placeholder="Logradouro*" formControlName="logradouro" />
-        <input pInputText placeholder="Complemento" formControlName="complemento" />
-        <input pInputText placeholder="Bairro" formControlName="bairro" />
-        <input pInputText placeholder="Cidade*" formControlName="localidade" />
-        <input pInputText placeholder="UF*" formControlName="uf" />
-        <input pInputText placeholder="Número" formControlName="numeroendereco" />
-      </p-fieldset>
+      </div>
+      <div class="input-container col-2">
+        <label for="quantidade"
+          >Quantidade<span [ngStyle]="{ color: 'var(--red-700)' }"
+            >*</span
+          ></label
+        >
+        <p-inputNumber
+          formControlName="quantidade"
+          [max]="9999"
+          [min]="1"
+          mode="decimal"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="vertical"
+          decrementButtonClass="p-button-secondary"
+          incrementButtonClass="p-button-secondary"
+          incrementButtonIcon="pi pi-plus"
+          decrementButtonIcon="pi pi-minus"
+          (onInput)="calcularValorTotal()"
+        ></p-inputNumber>
+      </div>
+      <div class="input-container col-3">
+        <label for="valortotal"
+          >Valor total do produto<span [ngStyle]="{ color: 'var(--red-700)' }"
+            >*</span
+          ></label
+        >
+        <p-inputNumber
+          formControlName="valortotal"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR"
+          placeholder="R$"
+          [max]="9999999"
+          [disabled]="true"
+        ></p-inputNumber>
+      </div>
     </div>
   </form>
-</p-card>
-
-<p-card header="Itens da nota fiscal" styleClass="shadow-3 m-5 text-indigo-800">
-  <div>
-    <form [formGroup]="itensNotaFiscalForm" class="">
-      <p-dropdown
-        [options]="produtos"
-        optionLabel="descricao"
-        placeholder="Selecione o Produto"
-        formControlName="produto"
-        (onShow)="carregaProdutos()"
-      ></p-dropdown>
-
-      <p-inputNumber
-        formControlName="valorunitario"
-        mode="currency"
-        currency="BRL"
-        locale="pt-BR"
-        placeholder="R$"
-        [max]="9999999"
-      ></p-inputNumber>
-
-      <p-inputNumber
-        formControlName="quantidade"
-        [max]="9999"
-        mode="decimal"
-        [showButtons]="true"
-        buttonLayout="vertical"
-        spinnerMode="vertical"
-        decrementButtonClass="p-button-secondary"
-        incrementButtonClass="p-button-secondary"
-        incrementButtonIcon="pi pi-plus"
-        decrementButtonIcon="pi pi-minus"
-      ></p-inputNumber>
-
-      <p-inputNumber
-        formControlName="valortotal"
-        mode="currency"
-        currency="BRL"
-        locale="pt-BR"
-        placeholder="R$"
-        [max]="9999999"
-      ></p-inputNumber>
-    </form>
-
+  <div
+    class="flex flex-row justify-content-end align-content-center align-items-center m-3"
+  >
     <button
       pButton
       pRipple
       type="button"
       label="Incluir Item"
       icon="pi pi-plus"
-      class="p-button-success"
+      class="p-button-success p-button-outlined"
       (click)="adicionarItem()"
     ></button>
   </div>
 
-  <p-table responsiveLayout="scroll">
+  <p-table
+  responsiveLayout="scroll"
+  [value]="itens"
+  [rowHover]="true"
+  >
     <ng-template pTemplate="header">
       <tr>
         <th>Produto</th>
@@ -109,42 +208,67 @@
       </tr>
     </ng-template>
 
-    <ng-template pTemplate="body">
-      <ng-container *ngIf="itens.length > 0; else noItems">
-        <tr *ngFor="let item of itens; let i = index">
+    <ng-template pTemplate="body" pTemplate="body" let-item>
+      <ng-container *ngIf="itens.length > 0" >
+        <tr >
           <td>{{ item.produto }}</td>
-          <td>{{ item.valorunitario }}</td>
-          <td>{{ item.quantidade }}</td>
-          <td>{{ item.valortotal }}</td>
           <td>
-            <button
-              pButton
-              pRipple
-              type="button"
-              icon="pi pi-trash"
-              class="p-button-danger"
-              (click)="excluirItem(i)"
-            ></button>
+            {{
+              item.valorunitario
+                ? (item.valorunitario | currency : "BRL" : "symbol" : "1.2-2")
+                : "-"
+            }}
+          </td>
+          <td>{{ item.quantidade }}</td>
+          <td>
+            {{
+              item.valortotal
+                ? (item.valortotal | currency : "BRL" : "symbol" : "1.2-2")
+                : "-"
+            }}
+          </td>
+          <td>
+            <div class="flex gap-2 align-items-center">
+              <button
+                pButton
+                pRipple
+                icon="pi pi-pencil"
+                class="p-button-warning"
+                (click)="editarItem(item)"
+              ></button>
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-trash"
+                class="p-button-danger"
+
+                (click)="excluirItem(item)"
+              ></button>
+            </div>
           </td>
         </tr>
       </ng-container>
     </ng-template>
 
-    <ng-template #noItems>
+    <ng-template pTemplate="emptymessage" let-columns>
       <tr>
-        <td colspan="5" class="text-center">Não há produtos adicionados</td>
+        <td [attr.colspan]="5">Nao ha itens adicionados</td>
       </tr>
     </ng-template>
   </p-table>
 
-  <!-- Botão de salvar -->
-  <button
-    pButton
-    pRipple
-    [disabled]="!notafiscalForm.valid"
-    type="submit"
-    label="Salvar"
-    icon="pi pi-save"
-    class="p-button-success"
-  ></button>
+  <div class="flex flex-row justify-content-center align-content-center align-items-center mt-3 ">
+    <button
+      pButton
+      pRipple
+      [disabled]="!notafiscalForm.valid || itens.length === 0"
+      type="submit"
+      label="Salvar"
+      icon="pi pi-save"
+      class="p-button-success"
+      (click)="handleSubmitNotafiscalAction()"
+
+    ></button>
+  </div>
 </p-card>

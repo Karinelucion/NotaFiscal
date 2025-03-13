@@ -33,7 +33,7 @@ export class NotafiscalService {
     );
   }
 
-  atualizarNotafiscalo(id: number, notafiscalRequest: NotafiscalRequest): Observable<Notafiscal> {
+  atualizarNotafiscal(id: number, notafiscalRequest: NotafiscalRequest): Observable<Notafiscal> {
     return this.http.put<Notafiscal>(`${this.API_URL}/notafiscal/${id}`, notafiscalRequest, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     }).pipe(

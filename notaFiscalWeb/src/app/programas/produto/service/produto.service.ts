@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Produto, ProdutoRequest } from '../model/produto.model';
 import { environment } from 'src/environments/environment.prod';
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
 import { ErrorHandlerService } from 'src/app/error/error-handler.service';
 @Injectable({
   providedIn: 'root'

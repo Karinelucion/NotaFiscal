@@ -40,7 +40,6 @@ export class ProdutoFormComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (produto) => {
-
             this.setProduto(produto.descricao, produto.preco ? String(produto.preco) : null, produto.situacao);
             this.produtoAction = { event: ProdutoEvent.EDIT_PRODUTO_ACTION };
           },
@@ -72,6 +71,12 @@ export class ProdutoFormComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso!',
+                detail: 'Produto editado com sucesso!',
+                life: 3000
+              })
               this.router.navigate(['/produto']);
             },
             error: (err) => {
@@ -89,6 +94,12 @@ export class ProdutoFormComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               this.produtoForm.reset();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Sucesso!',
+                detail: 'Produto criado com sucesso!',
+                life: 3000
+              })
               this.router.navigate(['/produto']);
             },
             error: (err) => {

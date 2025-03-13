@@ -5,10 +5,7 @@ import io.github.karinelucion.serverapi.notafiscal.NotaFiscalRepository;
 import io.github.karinelucion.serverapi.notafiscal.NotaFiscalResource;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -19,9 +16,14 @@ public class EnderecoService {
     @Inject
     EnderecoResource enderecoResource;
 
-
     @GET
     public List<Endereco> listarTodosEnderecos() {
         return enderecoResource.listarTodosEnderecos();
+    }
+
+    @GET
+    @Path("/buscaporcep/{cep}")
+    public Endereco buscaEnderecoPorCep(@PathParam("cep") String cep){
+        return enderecoResource.buscarEnderecoPorCep(cep);
     }
 }
