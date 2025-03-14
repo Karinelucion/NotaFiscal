@@ -44,6 +44,6 @@ export class HistoricoListComponent{
   }
 
   editarNotafiscal(id: string) {
-    this.router.navigate(['/notafiscal/inicio', id]);
+    this.router.navigate(['/notafiscal/inicio/editar/', id]);
   }
 }

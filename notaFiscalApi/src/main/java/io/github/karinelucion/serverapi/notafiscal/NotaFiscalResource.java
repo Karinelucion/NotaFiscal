@@ -8,6 +8,7 @@ import io.github.karinelucion.serverapi.fornecedor.FornecedorRepository;
 import io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.ItemNotaFiscal;
 import io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.dto.ItemNotaFiscalRequest;
 import io.github.karinelucion.serverapi.notafiscal.dto.NotaFiscalRequest;
+import io.github.karinelucion.serverapi.notafiscal.dto.NotaFiscalResponse;
 import io.github.karinelucion.serverapi.produto.Produto;
 import io.github.karinelucion.serverapi.produto.ProdutoRepository;
 
@@ -23,49 +24,30 @@ import java.util.List;
 public class NotaFiscalResource {
 
     @Inject
-    EnderecoResource enderecoResource;
-
-    @Inject
     FornecedorRepository fornecedorRepository;
-
-    @Inject
-    EnderecoRepository enderecoRepository;
 
     @Inject
     NotaFiscalRepository notaFiscalRepository;
 
-    @Inject
-    ProdutoRepository produtoRepository;
-
     @Transactional
     public NotaFiscal criarNotaFiscalComItem(NotaFiscalRequest dto) {
-        Endereco endereco = enderecoResource.buscarEnderecoPorCep(dto.getCep());
-        enderecoRepository.persist(endereco);
-
         Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedorid());
         if (fornecedor == null) {
             throw new NotFoundException("Fornecedor não encontrado!");
         }
 
-        NotaFiscal notaFiscal = NotaFiscalMapper.toEntity(dto, endereco, fornecedor);
+        NotaFiscal notaFiscal = NotaFiscalMapper.toEntity(dto, dto.getEndereco(), fornecedor);
 
         List<ItemNotaFiscal> itens = new ArrayList<>();
         float valortotal = 0.0F;
 
         for (ItemNotaFiscalRequest itemRequest : dto.getItens()) {
 
-            System.out.println("ITENS NO DTO: " + dto.getItens());
-            Produto produto = produtoRepository.findById(itemRequest.getProdutoid());
-
             ItemNotaFiscal item = new ItemNotaFiscal();
             item.setQuantidade(itemRequest.getQuantidade());
             item.setValorunitario(itemRequest.getValorunitario());
             item.setValortotal(item.getValorunitario() * item.getQuantidade());
-            if (produto == null) {
-                throw new NotFoundException("Produto não encontrado!");
-            }
-
-            item.setProduto(produto);
+            item.setProduto(itemRequest.getProduto());
             item.setNotaFiscal(notaFiscal);
 
             valortotal += itemRequest.getQuantidade() * itemRequest.getValorunitario();
@@ -73,11 +55,10 @@ public class NotaFiscalResource {
         }
 
         notaFiscal.setItens(itens);
-        notaFiscal.setValortotal(valortotal);
+        notaFiscal.setValortotalnota(valortotal);
 
         notaFiscalRepository.persist(notaFiscal);
 
-        System.out.println("Nota Fiscal criada com ID: " + notaFiscal.getId());
         return notaFiscal;
     }
 
@@ -97,12 +78,14 @@ public class NotaFiscalResource {
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    public NotaFiscalResponse buscarNotafiscalPorId(Long id){
+        return NotaFiscalMapper.toDTOResponse(notaFiscalRepository.findById(id));
+    }
+
+
     @Transactional
     public NotaFiscal atualizarNotaFiscal(Long id, NotaFiscalRequest dto) {
         NotaFiscal notaFiscal = notaFiscalRepository.findById(id);
-
-        Endereco endereco = enderecoResource.buscarEnderecoPorCep(dto.getCep());
-        enderecoRepository.persist(endereco);
 
         Fornecedor fornecedor = fornecedorRepository.findById(dto.getFornecedorid());
         if (fornecedor == null) {
@@ -111,24 +94,18 @@ public class NotaFiscalResource {
 
         notaFiscal.setNumero(dto.getNumero());
         notaFiscal.setDatahora(dto.getDatahora());
-        notaFiscal.setEndereco(endereco);
+        notaFiscal.setEndereco(dto.getEndereco());
         notaFiscal.setFornecedor(fornecedor);
 
         List<ItemNotaFiscal> itens = new ArrayList<>();
         float valortotal = 0.0F;
 
         for (ItemNotaFiscalRequest itemRequest : dto.getItens()) {
-            Produto produto = produtoRepository.findById(itemRequest.getProdutoid());
-
-            if (produto == null) {
-                throw new NotFoundException("Produto não encontrado!");
-            }
-
             ItemNotaFiscal item = new ItemNotaFiscal();
             item.setQuantidade(itemRequest.getQuantidade());
             item.setValorunitario(itemRequest.getValorunitario());
             item.setValortotal(item.getValorunitario() * item.getQuantidade());
-            item.setProduto(produto);
+            item.setProduto(item.getProduto());
             item.setNotaFiscal(notaFiscal);
 
             valortotal += item.getValortotal();
@@ -137,7 +114,7 @@ public class NotaFiscalResource {
 
         notaFiscal.getItens().clear();
         notaFiscal.getItens().addAll(itens);
-        notaFiscal.setValortotal(valortotal);
+        notaFiscal.setValortotalnota(valortotal);
 
         notaFiscalRepository.persist(notaFiscal);
 

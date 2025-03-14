@@ -5,7 +5,7 @@ export interface GetAllNotasfiscaisResponse {
   id: string;
   numero: string;
   datahora: Date;
-  valortotal: number;
+  valortotalnota: number;
   endereco: Endereco;
   fornecedor: Fornecedor;
   itens: Itens;

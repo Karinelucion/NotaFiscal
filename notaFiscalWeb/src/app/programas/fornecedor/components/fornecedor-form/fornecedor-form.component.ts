@@ -35,7 +35,6 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     public router: Router,
     private route: ActivatedRoute,
     private messageService: MessageService,
-    private datePipe: DatePipe,
     private dateService: DateService
   ) {}
 

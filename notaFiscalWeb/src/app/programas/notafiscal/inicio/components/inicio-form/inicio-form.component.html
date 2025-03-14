@@ -2,16 +2,19 @@
   header="Cadastro de nota fiscal"
   styleClass="shadow-3 m-5 text-indigo-800"
 >
-  <form
-    [formGroup]="notafiscalForm"
-  >
+  <form [formGroup]="notafiscalForm">
     <p-fieldset legend="Identificação" class="m-2">
       <div class="card grid gap-3">
         <div class="input-container col-2">
           <label for="numero"
             >Número<span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
           >
-          <input pInputText placeholder="NF-XXXX" formControlName="numero" />
+          <input
+            pInputText
+            placeholder="NF-XXXX"
+            formControlName="numero"
+            maxlength="50"
+          />
         </div>
         <div class="input-container col-3">
           <label for="datahora"
@@ -28,21 +31,7 @@
             dateFormat="dd/mm/yy"
           ></p-calendar>
         </div>
-        <div class="input-container col-2">
-          <label for="datahora"
-            >Valor total<span [ngStyle]="{ color: 'var(--red-700)' }"
-              >*</span
-            ></label
-          >
-          <p-inputNumber
-            formControlName="valortotalnota"
-            mode="currency"
-            currency="BRL"
-            locale="pt-BR"
-            placeholder="R$"
-            [disabled]="true"
-          ></p-inputNumber>
-        </div>
+
         <div class="input-container col-4">
           <label for="fornecedor"
             >Fornecedor<span [ngStyle]="{ color: 'var(--red-700)' }"
@@ -56,6 +45,20 @@
             formControlName="fornecedor"
             placeholder="Selecione um fornecedor"
           ></p-dropdown>
+        </div>
+        <div class="input-container col-2">
+          <label for="datahora"
+            >Valor total<span [ngStyle]="{ color: 'var(--red-700)' }"
+              >*</span
+            ></label
+          >
+          <p-inputNumber
+            formControlName="valortotalnota"
+            mode="currency"
+            currency="BRL"
+            locale="pt-BR"
+            placeholder="R$"
+          ></p-inputNumber>
         </div>
       </div>
     </p-fieldset>
@@ -76,7 +79,7 @@
           <label for="uf"
             >UF<span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
           >
-          <input pInputText formControlName="uf" />
+          <input pInputText formControlName="uf" maxlength="2" />
         </div>
         <div class="input-container col-4">
           <label for="localidade"
@@ -86,22 +89,22 @@
         </div>
         <div class="input-container col-4">
           <label for="logradouro"
-            >Logradouro
-            <span [ngStyle]="{ color: 'var(--red-700)' }">*</span></label
-          >
-          <input pInputText formControlName="logradouro" />
-        </div>
-        <div class="input-container col-4">
-          <label for="complemento">Complemento</label>
-          <input pInputText formControlName="complemento" />
+            >Logradouro<span [ngStyle]="{ color: 'var(--red-700)' }"
+              >*</span
+            ></label
+          ><input pInputText formControlName="logradouro" maxlength="255" />
         </div>
         <div class="input-container col-4">
           <label for="bairro">Bairro</label>
-          <input pInputText formControlName="bairro" />
+          <input pInputText formControlName="bairro" maxlength="100" />
+        </div>
+        <div class="input-container col-4">
+          <label for="complemento">Complemento</label>
+          <input pInputText formControlName="complemento" maxlength="255" />
         </div>
         <div class="input-container col-2">
           <label for="numeroendereco">Número</label>
-          <input pInputText formControlName="numeroendereco" />
+          <input pInputText formControlName="numeroendereco" maxlength="10" />
         </div>
       </div>
     </p-fieldset>
@@ -174,7 +177,6 @@
           locale="pt-BR"
           placeholder="R$"
           [max]="9999999"
-          [disabled]="true"
         ></p-inputNumber>
       </div>
     </div>
@@ -182,22 +184,48 @@
   <div
     class="flex flex-row justify-content-end align-content-center align-items-center m-3"
   >
-    <button
-      pButton
-      pRipple
-      type="button"
-      label="Incluir Item"
-      icon="pi pi-plus"
-      class="p-button-success p-button-outlined"
-      (click)="adicionarItem()"
-    ></button>
+    <div *ngIf="itemEditado === null" class="flex gap-3">
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Limpar"
+        class="p-button-secondary p-button-outlined"
+        (click)="limparFormItens()"
+      ></button>
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Incluir Item"
+        icon="pi pi-plus"
+        class="p-button-success p-button-outlined"
+        (click)="adicionarItem()"
+      ></button>
+    </div>
+
+    <div *ngIf="itemEditado !== null" class="flex gap-3">
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Cancelar"
+        class="p-button-secondary p-button-outlined"
+        (click)="limparFormItens()">
+      </button>
+      <button
+        pButton
+        pRipple
+        type="submit"
+        label="Salvar edicao"
+        icon="pi pi-check"
+        class="p-button-warning p-button-outlined"
+        (click)="salvarEdicao()"
+      ></button>
+    </div>
   </div>
 
-  <p-table
-  responsiveLayout="scroll"
-  [value]="itens"
-  [rowHover]="true"
-  >
+  <p-table responsiveLayout="scroll" [value]="itens" [rowHover]="true">
     <ng-template pTemplate="header">
       <tr>
         <th>Produto</th>
@@ -209,8 +237,8 @@
     </ng-template>
 
     <ng-template pTemplate="body" pTemplate="body" let-item>
-      <ng-container *ngIf="itens.length > 0" >
-        <tr >
+      <ng-container *ngIf="itens.length > 0">
+        <tr>
           <td>{{ item.produto.descricao }}</td>
           <td>
             {{
@@ -242,7 +270,6 @@
                 type="button"
                 icon="pi pi-trash"
                 class="p-button-danger"
-
                 (click)="excluirItem(item)"
               ></button>
             </div>
@@ -258,7 +285,9 @@
     </ng-template>
   </p-table>
 
-  <div class="flex flex-row justify-content-center align-content-center align-items-center mt-3 ">
+  <div
+    class="flex flex-row justify-content-center align-content-center align-items-center mt-3"
+  >
     <button
       pButton
       pRipple
@@ -268,7 +297,6 @@
       icon="pi pi-save"
       class="p-button-success"
       (click)="handleSubmitNotafiscalAction()"
-
     ></button>
   </div>
 </p-card>

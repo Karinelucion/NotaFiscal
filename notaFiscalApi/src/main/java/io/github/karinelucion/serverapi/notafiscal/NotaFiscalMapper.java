@@ -1,7 +1,9 @@
 package io.github.karinelucion.serverapi.notafiscal;
 
+import io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.dto.ItemNotaFiscalResponse;
 import io.github.karinelucion.serverapi.notafiscal.NotaFiscal;
 import io.github.karinelucion.serverapi.notafiscal.dto.NotaFiscalRequest;
+import io.github.karinelucion.serverapi.notafiscal.dto.NotaFiscalResponse;
 import io.github.karinelucion.serverapi.produto.Produto;
 import io.github.karinelucion.serverapi.produto.dto.ProdutoRequest;
 import io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.ItemNotaFiscal;
@@ -17,7 +19,7 @@ public class NotaFiscalMapper {
         NotaFiscal notaFiscal = new NotaFiscal();
         notaFiscal.setNumero(dto.getNumero());
         notaFiscal.setDatahora(dto.getDatahora());
-        notaFiscal.setValortotal(dto.getValortotal());
+        notaFiscal.setValortotalnota(dto.getValortotalnota());
         notaFiscal.setEndereco(endereco);
         notaFiscal.setFornecedor(fornecedor);
 
@@ -29,36 +31,42 @@ public class NotaFiscalMapper {
         return notaFiscal;
     }
 
-    public static NotaFiscalRequest toDTO(NotaFiscal notaFiscal) {
-        NotaFiscalRequest dto = new NotaFiscalRequest();
+    public static NotaFiscalResponse toDTOResponse(NotaFiscal notaFiscal) {
+        NotaFiscalResponse dto = new NotaFiscalResponse();
+        dto.setId(notaFiscal.getId());
         dto.setNumero(notaFiscal.getNumero());
         dto.setDatahora(notaFiscal.getDatahora());
-        dto.setValortotal(notaFiscal.getValortotal());
-        dto.setCep(notaFiscal.getEndereco().getCep());
-        dto.setFornecedorid(notaFiscal.getFornecedor().getId());
+        dto.setValortotalnota(notaFiscal.getValortotalnota());
+        dto.setEndereco(notaFiscal.getEndereco());
+        dto.setFornecedor(notaFiscal.getFornecedor());
 
         if (notaFiscal.getItens() != null) {
-            List<ItemNotaFiscalRequest> itensDTO = notaFiscal.getItens().stream().map(NotaFiscalMapper::toItemNotaFiscalDTO).collect(Collectors.toList());
+            List<ItemNotaFiscalResponse> itensDTO = notaFiscal.getItens().stream()
+                    .map(NotaFiscalMapper::toItemNotaFiscalDTO)
+                    .collect(Collectors.toList());
             dto.setItens(itensDTO);
         }
+
         return dto;
     }
 
     private static ItemNotaFiscal toItemNotaFiscalEntity(ItemNotaFiscalRequest dto) {
+        if (dto == null || dto.getProduto() == null) {
+            throw new IllegalArgumentException("Produto não pode ser nulo");
+        }
         ItemNotaFiscal item = new ItemNotaFiscal();
         item.setValorunitario(dto.getValorunitario());
         item.setQuantidade(dto.getQuantidade());
-        Produto produto = new Produto();
-        produto.setId(dto.getProdutoid());
-        item.setProduto(produto);
+        item.setProduto(dto.getProduto());
         return item;
     }
 
-    private static ItemNotaFiscalRequest toItemNotaFiscalDTO(ItemNotaFiscal item) {
-        ItemNotaFiscalRequest dto = new ItemNotaFiscalRequest();
+    private static ItemNotaFiscalResponse toItemNotaFiscalDTO(ItemNotaFiscal item) {
+        ItemNotaFiscalResponse dto = new ItemNotaFiscalResponse();
         dto.setValorunitario(item.getValorunitario());
         dto.setQuantidade(item.getQuantidade());
-        dto.setProdutoid(item.getProduto().getId());
+        dto.setProduto(item.getProduto());
+        dto.setValortotal(item.getValortotal());
         return dto;
     }
 

@@ -1,6 +1,7 @@
 package io.github.karinelucion.serverapi.notafiscal.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.karinelucion.serverapi.endereco.Endereco;
 import io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.dto.ItemNotaFiscalRequest;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
@@ -21,11 +22,11 @@ public class NotaFiscalRequest {
     @NotNull(message = "A datahora é obrigatória")
     private LocalDateTime datahora;
 
-    @NotNull(message = "O valortotal é obrigatório")
-    private Float valortotal;
+    @NotNull(message = "O valor total da nota é obrigatório")
+    private Float valortotalnota;
 
     @NotNull(message = "O endereco é obrigatório")
-    private String cep;
+    private Endereco endereco;
 
     @NotNull(message = "O fornecedor é obrigatório")
     private long fornecedorid;

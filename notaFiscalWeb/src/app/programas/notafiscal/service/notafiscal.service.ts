@@ -13,7 +13,7 @@ export class NotafiscalService {
 
   constructor(private http: HttpClient, private errorHandlerService: ErrorHandlerService ) {}
 
-  listaNotafiscalServicePorId(id: number): Observable<Notafiscal> {
+  listaNotafiscalPorId(id: number): Observable<Notafiscal> {
     return this.http.get<Notafiscal>(`${this.API_URL}/notafiscal/${id}`).pipe(
       catchError(this.errorHandlerService.handleError)
     );

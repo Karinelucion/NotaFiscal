@@ -28,6 +28,12 @@ public class NotaFiscalService {
         return notaFiscalResource.listarTodasNotasFiscais();
     }
 
+    @GET
+    @Path("{id}")
+    public Response listarNotafiscalPorId(@PathParam("id") Long id){
+        return Response.ok(notaFiscalResource.buscarNotafiscalPorId(id)).build();
+    }
+
     @DELETE
     @Path("{id}")
     public Response deletarNotaFiscal(@PathParam("id") Long id) {

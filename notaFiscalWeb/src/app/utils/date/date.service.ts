@@ -30,4 +30,8 @@ export class DateService {
     }
     return '';
   }
+
+  formataParaDataHora(data: Date){
+    return this.datePipe.transform(data, 'yyyy-MM-ddTHH:mm:ss')
+  }
 }

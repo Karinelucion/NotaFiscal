@@ -5,7 +5,7 @@ export interface NotafiscalRequest {
   numero: string;
   datahora: string;
   valortotalnota: number;
-  enderecoid: number;
+  endereco: EnderecoRequest;
   fornecedorid: number;
   itens: ItensRequest[]
 }
@@ -13,7 +13,7 @@ export interface Notafiscal {
   id: number;
   numero: string;
   datahora: Date;
-  valortotal: number;
+  valortotalnota: number;
   endereco: Endereco;
   fornecedor: Fornecedor;
   itens: Itens;
@@ -28,6 +28,16 @@ export interface Endereco {
   localidade: string;
   uf: string;
   numero: string;
+}
+
+export interface EnderecoRequest {
+  cep: string;
+  logradouro: string;
+  complemento?: string;
+  bairro?: string;
+  localidade: string;
+  uf: string;
+  numero?: string;
 }
 
 export interface ItensRequest {

@@ -1,5 +1,6 @@
 package io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.dto;
 
+import io.github.karinelucion.serverapi.produto.Produto;
 import lombok.Data;
 import javax.validation.constraints.NotNull;
 
@@ -13,5 +14,5 @@ public class ItemNotaFiscalRequest {
     private int quantidade;
 
     @NotNull(message = "O produto é obrigatório")
-    private Long produtoid;
+    private Produto produto;
 }

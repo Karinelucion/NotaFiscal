@@ -3,8 +3,11 @@ package io.github.karinelucion.serverapi.notafiscal;
 import io.github.karinelucion.serverapi.endereco.Endereco;
 import io.github.karinelucion.serverapi.fornecedor.Fornecedor;
 import io.github.karinelucion.serverapi.notafiscal.ItemNotaFiscal.ItemNotaFiscal;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,8 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "notafiscal")
 @SequenceGenerator(name = "seq_notafiscal", sequenceName = "seq_notafiscal", allocationSize = 1)
@@ -33,11 +35,11 @@ public class NotaFiscal {
     private LocalDateTime datahora;
 
     @NotNull
-    @Column(name = "valortotal")
-    private Float valortotal;
+    @Column(name = "valortotalnota")
+    private Float valortotalnota;
 
     @NotNull
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "enderecoid")
     private Endereco endereco;
 
@@ -46,6 +48,21 @@ public class NotaFiscal {
     @JoinColumn(name = "fornecedorid")
     private Fornecedor fornecedor;
 
+    @JsonbTransient
     @OneToMany(mappedBy = "notaFiscal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemNotaFiscal> itens = new ArrayList<>();
+
+
+    @Override
+    public String toString() {
+        return String.format("NotaFiscal{id=%d, numero='%s', datahora=%s, valortotalnota=%.2f, endereco=%s, fornecedor=%s, itens=%s}",
+                id,
+                numero,
+                datahora,
+                valortotalnota,
+                endereco != null ? endereco.toString() : "não informado",
+                fornecedor != null ? fornecedor.toString() : "não informado",
+                itens != null ? itens.toString() : "não informado");
+    }
+
 }

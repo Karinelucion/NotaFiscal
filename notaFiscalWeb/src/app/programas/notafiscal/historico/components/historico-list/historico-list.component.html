@@ -3,7 +3,13 @@
     <p-card styleClass="shadow-3 m-5 text-indigo-800" header="Notas fiscais">
       <div class="mb-3 flex align-items-center gap-3">
         <label for="pesquisa">Buscar Nota fiscal:</label>
-        <input id="pesquisa" pInputText [formControl]="controlePesquisa" class="w-30rem p-2" placeholder="Digite o numero da Nota fiscal..." />
+        <input
+          id="pesquisa"
+          pInputText
+          [formControl]="controlePesquisa"
+          class="w-30rem p-2"
+          placeholder="Digite o numero da Nota fiscal..."
+        />
       </div>
 
       <p-table
@@ -64,9 +70,7 @@
                 [showAddButton]="false"
               ></p-columnFilter>
             </th>
-            <th class="text-center">
-              Acoes
-            </th>
+            <th class="text-center">Acoes</th>
           </tr>
         </ng-template>
 
@@ -74,8 +78,15 @@
           <tr>
             <td>{{ notafiscal?.id }}</td>
             <td>{{ notafiscal?.numero }}</td>
-            <td>{{ notafiscal?.datahora }}</td>
-            <td>{{ notafiscal?.valortotal ? (notafiscal.valortotal | currency:'BRL':'symbol':'1.2-2') : '-' }}td>
+            <td>{{ notafiscal?.datahora  | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              {{
+                notafiscal?.valortotalnota
+                  ? (notafiscal.valortotalnota
+                    | currency : "BRL" : "symbol" : "1.2-2")
+                  : "-"
+              }}
+            </td>
             <td class="text-center">
               <div class="flex gap-2 justify-content-center align-items-center">
                 <button
@@ -90,7 +101,12 @@
                   pRipple
                   icon="pi pi-trash"
                   class="p-button-rounded p-button-danger"
-                  (click)="handleDeleteNotafiscalEvent(notafiscal?.id, notafiscal?.numero)"
+                  (click)="
+                    handleDeleteNotafiscalEvent(
+                      notafiscal?.id,
+                      notafiscal?.numero
+                    )
+                  "
                 ></button>
               </div>
             </td>

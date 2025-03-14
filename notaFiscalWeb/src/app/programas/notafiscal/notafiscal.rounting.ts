@@ -9,5 +9,6 @@ export const NOTAFISCAL_ROUTES: Routes = [
   },
 
   { path: 'inicio', component: InicioHomeComponent },
+  { path: 'inicio/editar/:id', component: InicioHomeComponent },
   { path: 'historico', component: HistoricoHomeComponent },
 ]
