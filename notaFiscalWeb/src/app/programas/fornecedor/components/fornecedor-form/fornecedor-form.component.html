@@ -13,8 +13,8 @@
           >Razão Social
           <span [ngStyle]="{ color: 'var(--red-700)' }">*</span>
         </label>
-        <input pInputText formControlName="razaosocial"/>
-    </div>
+        <input pInputText formControlName="razaosocial" />
+      </div>
       <div class="input-container col-6">
         <label for="email"
           >E-mail
@@ -29,7 +29,7 @@
           placeholder="(__) _ ____-____"
           formControlName="telefone"
           type="tel"
-          mask="(**) * ****-****"
+          mask="(99) 9 9999-9999"
         ></p-inputMask>
       </div>
       <div class="input-container col-2 sm:col-12">
@@ -40,7 +40,7 @@
         <p-inputMask
           placeholder="__.___.___/____-__"
           formControlName="cnpj"
-          mask="**.***.***/****-**"
+          mask="99.999.999/9999-99"
         ></p-inputMask>
       </div>
       <div class="input-container col-2 sm:col-12">
@@ -60,13 +60,18 @@
           >Situação
           <span [ngStyle]="{ color: 'var(--red-700)' }">*</span>
         </label>
-        <p-checkbox
+        <p-dropdown
           formControlName="situacao"
-          [binary]="true"
-        ></p-checkbox>
+          [options]="situacaoOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione a situação"
+        ></p-dropdown>
       </div>
     </div>
-    <div class="row flex flex-row justify-content-center align-content-center align-items-center gap-3">
+    <div
+      class="row flex flex-row justify-content-center align-content-center align-items-center gap-3"
+    >
       <button
         pButton
         pRipple

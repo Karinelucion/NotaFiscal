@@ -5,6 +5,7 @@ import { ProdutoService } from '../../service/produto.service';
 import { ProdutoEvent } from '../../model/event/enum/ProdutoEvent';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { MensagemtoastService } from 'src/app/utils/mensagemtoast/mensagemtoast.service';
 
 @Component({
   selector: 'app-produto-form',
@@ -29,7 +30,8 @@ export class ProdutoFormComponent implements OnInit, OnDestroy {
     private produtoService: ProdutoService,
     public router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService
+    private mensagemService: MensagemtoastService
+
   ) {}
 
   ngOnInit(): void {
@@ -44,12 +46,7 @@ export class ProdutoFormComponent implements OnInit, OnDestroy {
             this.produtoAction = { event: ProdutoEvent.EDIT_PRODUTO_ACTION };
           },
           error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: err.message,
-              life: 3000
-            });
+            this.mensagemService.mensagemErro(err);
           }
         });
     } else {
@@ -71,21 +68,11 @@ export class ProdutoFormComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Sucesso!',
-                detail: 'Produto editado com sucesso!',
-                life: 3000
-              })
+              this.mensagemService.mensagemRegistroAlterado();
               this.router.navigate(['/produto']);
             },
             error: (err) => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Erro',
-                detail: err.message,
-                life: 3000
-              });
+              this.mensagemService.mensagemErro(err);
             }
           });
       } else {
@@ -94,21 +81,11 @@ export class ProdutoFormComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               this.produtoForm.reset();
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Sucesso!',
-                detail: 'Produto criado com sucesso!',
-                life: 3000
-              })
+              this.mensagemService.mensagemRegistroIncluido();
               this.router.navigate(['/produto']);
             },
             error: (err) => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Erro',
-                detail: err.message,
-                life: 3000
-              });
+              this.mensagemService.mensagemErro(err);
             }
           });
       }

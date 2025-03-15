@@ -20,7 +20,7 @@ export class HistoricoListComponent{
   @Output() public deleteNotafiscalEvent = new EventEmitter<DeleteNotafiscalAction>()
 
   public notafiscalSelecionado!: GetNotafiscalResponse;
-  controlePesquisa = new FormControl('');
+  controlePesquisa = new FormControl();
 
 
   constructor(
@@ -32,7 +32,7 @@ export class HistoricoListComponent{
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),
-        switchMap(value => this.notafiscalService.buscarNotasFiscaisFiltro(value || ''))
+        switchMap(value => this.notafiscalService.buscarNotasFiscaisFiltro(value))
       )
       .subscribe(notasfiscais => this.notasfiscais = notasfiscais);
   }

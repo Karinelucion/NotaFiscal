@@ -75,7 +75,7 @@
             <td>{{ produto?.id }}</td>
             <td>{{ produto?.descricao }}</td>
             <td>{{ produto?.preco ? (produto.preco | currency:'BRL':'symbol':'1.2-2') : '-' }}</td>
-            <td>{{ produto?.situacao }}</td>
+            <td>{{ produto?.situacao === 'ATIVO' ? 'Ativo' : 'Inativo'}}</td>
             <td class="text-center">
               <div class="flex gap-2 justify-content-center align-items-center">
                 <button
@@ -94,6 +94,12 @@
                 ></button>
               </div>
             </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage" let-columns>
+          <tr>
+            <td [attr.colspan]="5">Não há produtos cadastrados</td>
           </tr>
         </ng-template>
       </p-table>

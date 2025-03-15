@@ -43,8 +43,12 @@ public class NotaFiscalService {
     @PUT
     @Path("{id}")
     public Response atualizarNotaFiscal(@PathParam("id") Long id, NotaFiscalRequest notaFiscalRequest) {
-        notaFiscalResource.atualizarNotaFiscal(id, notaFiscalRequest);
-        return Response.noContent().build();
+        return notaFiscalResource.atualizarNotaFiscal(id, notaFiscalRequest);
     }
 
+    @GET
+    @Path("/pesquisar")
+    public Response buscarFornecedorFiltro(@QueryParam("numero") String numero){
+        return Response.ok(notaFiscalResource.buscarNotaficalFiltro(numero)).build();
+    }
 }

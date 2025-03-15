@@ -1,39 +1,38 @@
-package io.github.karinelucion.serverapi.produto.Validacoes;
+package io.github.karinelucion.serverapi.fornecedor.validacoes;
 
 import io.github.karinelucion.serverapi.error.FieldError;
 import io.github.karinelucion.serverapi.error.ResponseError;
-import io.github.karinelucion.serverapi.produto.ProdutoRepository;
-import io.github.karinelucion.serverapi.produto.dto.ProdutoRequest;
+import io.github.karinelucion.serverapi.fornecedor.FornecedorRepository;
+import io.github.karinelucion.serverapi.fornecedor.dto.FornecedorRequest;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Set;
 
 @RequestScoped
-public class ValidacaoProduto {
+public class ValidacaoFornecedor {
 
-    private final ProdutoRepository produtoRepository;
+    private final FornecedorRepository fornecedorRepository;
 
     private Validator validator;
 
 
     @Inject
-    public ValidacaoProduto(ProdutoRepository produtoRepository, Validator validator) {
-        this.produtoRepository = produtoRepository;
+    public ValidacaoFornecedor(FornecedorRepository fornecedorRepository, Validator validator) {
+        this.fornecedorRepository = fornecedorRepository;
         this.validator = validator;
     }
 
-    public ResponseError validarExclusaoProduto(Long produtoId) {
-        boolean produtoReferenciado = produtoRepository.verificarProdutoReferenciadoEmItemNotaFiscal(produtoId);
+    public ResponseError validarExclusaoFornecedor(Long fornecedorId) {
+        boolean fornecedorReferenciado = fornecedorRepository.verificarFornecedorReferenciadoEmNotaFiscal(fornecedorId);
 
-        if (produtoReferenciado) {
+        if (fornecedorReferenciado) {
             FieldError fieldError = new FieldError(
                     "produto",
-                    "Não é possível excluir um produto que já foi utilizado em outro registro. Se necessário, você pode inativar o produto."
+                    "Não é possível excluir um fornecedor que já foi utilizado em outro registro. Se necessário, você pode alterar a situacão do fornecedor."
             );
             return new ResponseError("Erro de exclusão", List.of(fieldError));
         }
@@ -41,13 +40,23 @@ public class ValidacaoProduto {
         return null;
     }
 
-    public ResponseError validarPersistenciaProduto(ProdutoRequest request) {
-        Set<ConstraintViolation<ProdutoRequest>> violations = validator.validate(request);
+    public ResponseError validarPersistenciaFornecedor(FornecedorRequest request, long fornecedorid) {
+        Set<ConstraintViolation<FornecedorRequest>> violations = validator.validate(request);
 
         if(!violations.isEmpty()){
             return ResponseError.validaCriacaoDoForm(violations);
         }
+
+        if(fornecedorRepository.existePorCnpj(request.getCnpj(), fornecedorid)){
+            FieldError fieldError = new FieldError(
+                    "fornecedor",
+                    "O CNPJ informado já está vinculado ao cadastro de outro fornecedor"
+            );
+            return new ResponseError("Erro de validação", List.of(fieldError));
+        }
+
         return null;
     }
+
 
 }

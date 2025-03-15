@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ProdutoService } from '../../service/produto.service';
 import { Router } from '@angular/router';
 import { GetProdutosResponse } from '../../model/GetProdutoResponse';
+import { MensagemtoastService } from 'src/app/utils/mensagemtoast/mensagemtoast.service';
 
 @Component({
   selector: 'app-produto-home',
@@ -15,13 +16,12 @@ import { GetProdutosResponse } from '../../model/GetProdutoResponse';
 export class ProdutoHomeComponent implements OnDestroy, OnInit {
   private readonly destroy$: Subject<void> = new Subject();
   public produtosDatas: Array<GetProdutosResponse> = [];
-  private ref!: DynamicDialogRef;
 
   constructor(
     private produtoService: ProdutoService,
-    private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private router: Router
+    private router: Router,
+    private mensagemService: MensagemtoastService
   ) {}
 
   ngOnInit(): void {
@@ -40,12 +40,7 @@ export class ProdutoHomeComponent implements OnDestroy, OnInit {
         },
         error: (err) => {
           console.log(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Erro ao buscar produtos',
-            life: 3000,
-          });
+          this.mensagemService.mensagemErroAoBuscar()
           this.router.navigate(['/']);
         },
       });
@@ -72,22 +67,12 @@ export class ProdutoHomeComponent implements OnDestroy, OnInit {
         .subscribe({
           next: (response) => {
             this.getAllProdutos();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Produto removido com sucesso!',
-              life: 3000,
-            });
+            this.mensagemService.mensagemSucessoAoRemover()
           },
           error: (err) => {
             console.log(err);
             this.getAllProdutos();
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: 'Erro ao deletar produtos',
-              life: 3000,
-            });
+            this.mensagemService.mensagemErro(err)
           },
         });
         this.getAllProdutos();

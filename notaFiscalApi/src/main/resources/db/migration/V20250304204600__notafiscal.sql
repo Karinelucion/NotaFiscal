@@ -9,8 +9,8 @@ CREATE TABLE notafiscal (
     valortotalnota DECIMAL(10,2) ,
     enderecoid INT NOT NULL,
     fornecedorid INT NOT NULL,
-    FOREIGN KEY (enderecoid) REFERENCES endereco(enderecoid) ON DELETE CASCADE,
-    FOREIGN KEY (fornecedorid) REFERENCES fornecedor(fornecedorid) ON DELETE CASCADE
+    FOREIGN KEY (enderecoid) REFERENCES endereco(enderecoid),
+    FOREIGN KEY (fornecedorid) REFERENCES fornecedor(fornecedorid)
 );
 
 CREATE TABLE itemnotafiscal (
@@ -20,6 +20,6 @@ CREATE TABLE itemnotafiscal (
     valortotal DECIMAL(10,2),
     notafiscalid INT NOT NULL,
     produtoid INT NOT NULL,
-    FOREIGN KEY (notafiscalid) REFERENCES notafiscal(notafiscalid) ON DELETE CASCADE,
-    FOREIGN KEY (produtoid) REFERENCES produto(produtoid) ON DELETE CASCADE
-););
+    FOREIGN KEY (notafiscalid) REFERENCES notafiscal(notafiscalid),
+    FOREIGN KEY (produtoid) REFERENCES produto(produtoid)
+);

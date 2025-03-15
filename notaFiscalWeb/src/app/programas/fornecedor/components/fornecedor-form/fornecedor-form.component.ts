@@ -2,11 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { FornecedorService } from '../../service/fornecedor.service';
 import { FornecedorEvent } from '../../model/event/enum/FornecedorEvent';
-import { DatePipe } from '@angular/common';
 import { DateService } from 'src/app/utils/date/date.service';
+import { MensagemtoastService } from 'src/app/utils/mensagemtoast/mensagemtoast.service';
+import { FormatacaoUtilService } from 'src/app/utils/formatacao/formatacaoutil.service';
+import { Situacao } from '../../model/fornecedor.model';
 
 @Component({
   selector: 'app-fornecedor-form',
@@ -23,19 +24,24 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
   public fornecedorForm = this.formBuilder.group({
     razaosocial: ['', Validators.required],
     email:['', Validators.required],
-    telefone: [null],
+    telefone: [''],
     cnpj: ['', Validators.required],
-    databaixa: [null],
-    situacao: [true, Validators.required]
+    databaixa: [new Date(), Validators.required],
+    situacao: [ Validators.required]
   });
+  public situacaoOptions = Object.keys(Situacao).map(key => ({
+    label: Situacao[key as keyof typeof Situacao], 
+    value: key
+  }));
 
   constructor(
     private formBuilder: FormBuilder,
     private fornecedorService: FornecedorService,
     public router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService,
-    private dateService: DateService
+    private dateService: DateService,
+    private mensagemService: MensagemtoastService,
+    private formatacaoUtilService: FormatacaoUtilService
   ) {}
 
   ngOnInit(): void {
@@ -46,17 +52,11 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (fornecedor) => {
-
             this.setFornecedor(fornecedor.razaosocial, fornecedor.email, fornecedor.telefone, fornecedor.cnpj, fornecedor.databaixa, fornecedor.situacao);
             this.fornecedorAction = { event: FornecedorEvent.EDIT_FORNECEDOR_ACTION };
           },
           error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: err.message,
-              life: 3000
-            });
+            this.mensagemService.mensagemErro(err)
           }
         });
     } else {
@@ -67,15 +67,13 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
   handleSubmitFornecedorAction(): void {
     if (this.fornecedorForm?.value && this.fornecedorForm?.valid) {
       const fornecedorId = this.route.snapshot.paramMap.get('id');
-
-
       const fornecedorData = {
         razaosocial: this.fornecedorForm.value.razaosocial as string,
         email: this.fornecedorForm.value.email as string,
-        telefone: this.fornecedorForm.value.telefone as string,
+        telefone: this.formatacaoUtilService.tiraFormatacaoTelefone(this.fornecedorForm.value.telefone),
         cnpj: this.fornecedorForm.value.cnpj as string,
-        databaixa: this.dateService.getDataSemHora(this.fornecedorForm, "databaixa"),
-        situacao: this.fornecedorForm.value.situacao ? 'ATIVO' : 'INATIVO',
+        databaixa: this.dateService.getDataSemHora(this.fornecedorForm.value.databaixa),
+        situacao: this.fornecedorForm.value.situacao
       };
 
       if (fornecedorId) {
@@ -83,15 +81,11 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
+              this.mensagemService.mensagemRegistroAlterado()
               this.router.navigate(['/fornecedor']);
             },
             error: (err) => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Erro',
-                detail: err.message,
-                life: 3000
-              });
+              this.mensagemService.mensagemErro(err)
             }
           });
       } else {
@@ -100,15 +94,11 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               this.fornecedorForm.reset();
+              this.mensagemService.mensagemRegistroIncluido()
               this.router.navigate(['/fornecedor']);
             },
             error: (err) => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Erro',
-                detail: err.message,
-                life: 3000
-              });
+              this.mensagemService.mensagemErro(err)
             }
           });
       }
@@ -124,14 +114,13 @@ export class FornecedorFormComponent implements OnInit, OnDestroy {
     fornecedor_databaixa: Date,
     fornecedor_situacao: string
   ) {
-
     this.fornecedorForm.setValue({
       razaosocial: fornecedor_razaosocial,
       email: fornecedor_email,
       telefone: fornecedor_telefone,
       cnpj: fornecedor_cnpj,
-      databaixa: fornecedor_databaixa,
-      situacao: fornecedor_situacao === 'ATIVO'
+      databaixa: new Date(fornecedor_databaixa),
+      situacao: fornecedor_situacao
     });
   }
 

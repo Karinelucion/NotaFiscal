@@ -3,35 +3,42 @@ import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DateService {
+  constructor(private datePipe: DatePipe) {}
 
-  constructor(
-    private datePipe : DatePipe
-  ) { }
-
-  getDataSemHora(form: FormGroup, campo:string): string {
-    const data: Date = form.get(campo)?.value;
+  getDataSemHora(data: Date): string {
     if (data) {
-      const dataSemHora = new Date(data.getFullYear(), data.getMonth(), data.getDate());
+      const dataSemHora = new Date(
+        data.getFullYear(),
+        data.getMonth(),
+        data.getDate()
+      );
 
       return this.datePipe.transform(dataSemHora, 'yyyy-MM-dd')!;
     }
     return '';
   }
 
-  getDataHoraSemFuso(form: FormGroup, campo:string): string {
+  getDataHoraSemFuso(form: FormGroup, campo: string): string {
     const data: Date = form.get(campo)?.value;
     if (data) {
-      const datahoraSemFuso = new Date(data.getFullYear(), data.getMonth(), data.getDate(), data.getHours(), data.getMinutes(), data.getSeconds() );
+      const datahoraSemFuso = new Date(
+        data.getFullYear(),
+        data.getMonth(),
+        data.getDate(),
+        data.getHours(),
+        data.getMinutes(),
+        data.getSeconds()
+      );
 
       return this.datePipe.transform(datahoraSemFuso, 'yyyy-MM-ddThh:mm:ss')!;
     }
     return '';
   }
 
-  formataParaDataHora(data: Date){
-    return this.datePipe.transform(data, 'yyyy-MM-ddTHH:mm:ss')
+  formataParaDataHora(data: Date) {
+    return this.datePipe.transform(data, 'yyyy-MM-ddTHH:mm:ss');
   }
 }

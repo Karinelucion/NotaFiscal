@@ -26,5 +26,6 @@ public class FornecedorRequest {
     @NotNull(message = "A situação é obrigatória")
     private SituacaoFornecedorEnum situacao;
 
+    @NotNull(message = "A data da baixa é obrigatória")
     private LocalDate databaixa;
 }

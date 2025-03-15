@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { GetFornecedorResponse } from '../../model/GetFornecedorResponse';
 import { FornecedorService } from '../../service/fornecedor.service';
 import { DeleteFornecedorAction } from '../../model/event/DeleteFornecedorAction';
+import { MensagemtoastService } from 'src/app/utils/mensagemtoast/mensagemtoast.service';
 
 @Component({
   selector: 'app-fornecedor-home',
@@ -21,7 +22,8 @@ export class FornecedorHomeComponent implements OnDestroy, OnInit {
     private fornecedorService: FornecedorService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private router: Router
+    private router: Router,
+    private mensagemService: MensagemtoastService
   ) {}
 
   ngOnInit(): void {
@@ -40,12 +42,8 @@ export class FornecedorHomeComponent implements OnDestroy, OnInit {
         },
         error: (err) => {
           console.log(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Erro ao buscar fornecedores',
-            life: 3000,
-          });
+          this.mensagemService.mensagemErroAoBuscar()
+
           this.router.navigate(['/']);
         },
       });
@@ -82,12 +80,7 @@ export class FornecedorHomeComponent implements OnDestroy, OnInit {
           error: (err) => {
             console.log(err);
             this.getAllFornecedores();
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: 'Erro ao deletar fornecedores',
-              life: 3000,
-            });
+            this.mensagemService.mensagemErro(err)
           },
         });
         this.getAllFornecedores();

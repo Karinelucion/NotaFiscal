@@ -44,5 +44,8 @@ public class Fornecedor {
     private SituacaoFornecedorEnum situacao;
 
     @Column(name = "databaixa")
+    @NotNull
     private LocalDate databaixa;
+
+
 }

@@ -1,11 +1,10 @@
-import { EnderecoUtilService } from './../../../../../utils/endereco/enderecoutil.service';
+import { FormatacaoUtilService } from '../../../../../utils/formatacao/formatacaoutil.service';
 import { Fornecedor } from './../../../../fornecedor/model/fornecedor.model';
 import { FornecedorService } from './../../../../fornecedor/service/fornecedor.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MessageService } from 'primeng/api';
 import { NotafiscalEvent } from '../../../model/event/enum/NotafiscalEvent';
 import { NotafiscalService } from '../../../service/notafiscal.service';
 import {
@@ -17,7 +16,7 @@ import { Produto } from 'src/app/programas/produto/model/produto.model';
 import { ProdutoService } from 'src/app/programas/produto/service/produto.service';
 import { EnderecoService } from 'src/app/programas/endereco/endereco.service';
 import { DateService } from 'src/app/utils/date/date.service';
-import { DatePipe } from '@angular/common';
+import { MensagemtoastService } from 'src/app/utils/mensagemtoast/mensagemtoast.service';
 
 @Component({
   selector: 'app-inicio-form',
@@ -26,15 +25,16 @@ import { DatePipe } from '@angular/common';
 })
 export class InicioFormComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject();
-
+  private notafiscalId = this.route.snapshot.paramMap.get('id');
+  private notafiscalData!: NotafiscalRequest;
   public situacaoValor: boolean = true;
   public addNotafiscalAction = NotafiscalEvent.ADD_NOTAFISCAL_ACTION;
   public editNotafiscalAction = NotafiscalEvent.EDIT_NOTAFISCAL_ACTION;
   public notafiscalAction!: { event: NotafiscalEvent };
   public notafiscalForm = this.formBuilder.group({
     numero: [null, Validators.required],
-    datahora: [null],
-    valortotalnota: [{ value: 0, disabled: true }],
+    datahora: [new Date()],
+    valortotalnota: [null, Validators.required],
     cep: [null, Validators.required],
     logradouro: [null, Validators.required],
     complemento: [null],
@@ -46,7 +46,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
   });
   public itensNotaFiscalForm = this.formBuilder.group({
     produto: [null, Validators.required],
-    valortotal: [{ value: 0, disabled: true }, Validators.required],
+    valortotal: [null, Validators.required],
     valorunitario: [null, Validators.required],
     quantidade: [1, Validators.required],
   });
@@ -63,143 +63,32 @@ export class InicioFormComponent implements OnInit, OnDestroy {
   } | null = null;
 
   constructor(
+    public router: Router,
     private formBuilder: FormBuilder,
     private notafiscalService: NotafiscalService,
-    public router: Router,
     private route: ActivatedRoute,
-    private messageService: MessageService,
     private fornecedorService: FornecedorService,
     private produtoService: ProdutoService,
     private enderecoService: EnderecoService,
     private dateService: DateService,
-    private enderecoUtilService: EnderecoUtilService
+    private formatacaoUtilService: FormatacaoUtilService,
+    private mensagemService: MensagemtoastService
   ) {}
 
   ngOnInit(): void {
-    const notafiscalId = this.route.snapshot.paramMap.get('id');
 
-    if (notafiscalId) {
-      this.notafiscalService
-        .listaNotafiscalPorId(Number(notafiscalId))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (notafiscal) => {
-            this.setNotafiscal(
-              notafiscal.numero,
-              notafiscal.datahora,
-              notafiscal.valortotalnota
-                ? String(notafiscal.valortotalnota)
-                : null,
-              notafiscal.endereco.cep,
-              notafiscal.endereco.logradouro,
-              notafiscal.endereco.complemento,
-              notafiscal.endereco.bairro,
-              notafiscal.endereco.localidade,
-              notafiscal.endereco.uf,
-              notafiscal.endereco.numero,
-              notafiscal.fornecedor,
-              Array.isArray(notafiscal.itens)
-                ? notafiscal.itens
-                : [notafiscal.itens]
-            );
-            this.notafiscalAction = {
-              event: NotafiscalEvent.EDIT_NOTAFISCAL_ACTION,
-            };
-          },
-          error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: err.message,
-              life: 3000,
-            });
-          },
-        });
-    } else {
-      this.notafiscalAction = { event: NotafiscalEvent.ADD_NOTAFISCAL_ACTION };
+    if (this.notafiscalId) {
+      this.preencheFormEmEdicao();
     }
   }
 
   handleSubmitNotafiscalAction(): void {
     if (this.notafiscalForm.valid) {
-      const notafiscalId = this.route.snapshot.paramMap.get('id');
-
-      const notafiscalData: NotafiscalRequest = {
-        numero: this.notafiscalForm.value.numero,
-        datahora: this.dateService.getDataHoraSemFuso(
-          this.notafiscalForm,
-          'datahora'
-        ),
-        valortotalnota: this.notafiscalForm.value.valortotalnota,
-        endereco: {
-          cep: this.enderecoUtilService.tiraFormatacaoCep(
-            this.notafiscalForm.value.cep
-          ),
-          logradouro: this.notafiscalForm.value.logradouro,
-          complemento: this.notafiscalForm.value.complemento,
-          bairro: this.notafiscalForm.value.bairro,
-          localidade: this.notafiscalForm.value.localidade,
-          uf: this.notafiscalForm.value.uf,
-          numero: this.notafiscalForm.value.numeroendereco,
-        },
-        fornecedorid: this.fornecedorSelecionado
-          ? this.fornecedorSelecionado.id
-          : this.notafiscalForm.value.fornecedor.id,
-        itens: this.itens.map((item) => ({
-          valorunitario: Number(item.valorunitario),
-          quantidade: Number(item.quantidade),
-          valortotal: Number(item.valortotal),
-          produto: item.produto as Produto,
-        })),
-      };
-
-      if (notafiscalId) {
-        this.notafiscalService
-          .atualizarNotafiscal(Number(notafiscalId), notafiscalData)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: () => {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Sucesso!',
-                detail: 'Nota fiscal editada com sucesso!',
-                life: 3000,
-              });
-              this.router.navigate(['/notafiscal/historico']);
-            },
-            error: (err) => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Erro',
-                detail: err.message,
-                life: 3000,
-              });
-            },
-          });
+      this.setNotaFiscalData();
+      if (this.notafiscalId) {
+        this.editaNotafiscal()
       } else {
-        this.notafiscalService
-          .criarNotafiscal(notafiscalData)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: () => {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Sucesso!',
-                detail: 'Nota fiscal criada com sucesso!',
-                life: 3000,
-              });
-              this.notafiscalForm.reset();
-              this.itens = [];
-            },
-            error: (err) => {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Erro',
-                detail: err.message,
-                life: 3000,
-              });
-            },
-          });
+        this.incluiNotaFiscal()
       }
     }
   }
@@ -207,7 +96,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
   setNotafiscal(
     notafiscal_numero: string,
     notafiscal_datahora: Date,
-    notafiscal_valortotalnota: string | null,
+    notafiscal_valortotalnota: number | 0,
     notafiscal_cep: string,
     notafiscal_logradouro: string,
     notafiscal_complemento: string,
@@ -244,12 +133,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
           this.fornecedores = fornecedores;
         },
         error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: err.message,
-            life: 3000,
-          });
+          this.mensagemService.mensagemErro(err);
         },
       });
   }
@@ -263,12 +147,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
           this.produtos = produtos;
         },
         error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: err.message,
-            life: 3000,
-          });
+          this.mensagemService.mensagemErro(err);
         },
       });
   }
@@ -299,15 +178,9 @@ export class InicioFormComponent implements OnInit, OnDestroy {
         });
 
         this.calculaValorTotalNota();
-
         this.itensNotaFiscalForm.reset({ quantidade: 1 });
       } else {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Atenção!',
-          detail: 'Preencha os campos obrigatórios!',
-          life: 3000,
-        });
+        this.mensagemService.mensagemCamposObrigatorios();
       }
     }
   }
@@ -341,7 +214,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
     this.itemEditado = item;
   }
 
-  salvarEdicao() {
+  salvarEdicaoItem() {
     if (this.itemEditado) {
       const index = this.itens.findIndex(
         (existingItem) =>
@@ -418,7 +291,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
   buscaEnderecoPorCep() {
     this.enderecoService
       .buscaPorCep(
-        this.enderecoUtilService.tiraFormatacaoCep(
+        this.formatacaoUtilService.tiraFormatacaoCep(
           this.notafiscalForm.value.cep
         )
       )
@@ -432,12 +305,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
           });
         },
         error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: err.message,
-            life: 3000,
-          });
+          this.mensagemService.mensagemErro(err);
         },
       });
   }
@@ -447,13 +315,7 @@ export class InicioFormComponent implements OnInit, OnDestroy {
       (item) => item.produto.id === produto.id
     );
     if (itemJaAdicionado) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Atenção',
-        detail:
-          'Não é possível incluir o mesmo produto duas vezes. Se necessário, altere o valor ou/e a quantidade do produto já adicionado',
-        life: 3000,
-      });
+      this.mensagemService.mensagemProdutoJaAdicionado();
     }
     return itemJaAdicionado;
   }
@@ -461,6 +323,108 @@ export class InicioFormComponent implements OnInit, OnDestroy {
   limparFormItens() {
     this.itensNotaFiscalForm.reset({ quantidade: 1 });
     this.itemEditado = null;
+  }
+
+  setNotaFiscalData() {
+      this.notafiscalData = {
+      numero: this.notafiscalForm.value.numero,
+      datahora: this.dateService.getDataHoraSemFuso(
+        this.notafiscalForm,
+        'datahora'
+      ),
+      valortotalnota: this.notafiscalForm.value.valortotalnota,
+      endereco: {
+        cep: this.formatacaoUtilService.tiraFormatacaoCep(
+          this.notafiscalForm.value.cep
+        ),
+        logradouro: this.notafiscalForm.value.logradouro,
+        complemento: this.notafiscalForm.value.complemento,
+        bairro: this.notafiscalForm.value.bairro,
+        localidade: this.notafiscalForm.value.localidade,
+        uf: this.notafiscalForm.value.uf,
+        numero: this.notafiscalForm.value.numeroendereco,
+      },
+      fornecedorid: this.fornecedorSelecionado
+        ? this.fornecedorSelecionado.id
+        : this.notafiscalForm.value.fornecedor.id,
+      itens: this.itens.map((item) => ({
+        valorunitario: Number(item.valorunitario),
+        quantidade: Number(item.quantidade),
+        valortotal: Number(item.valortotal),
+        produto: item.produto as Produto,
+      })),
+    };
+  }
+
+  preencheFormEmEdicao() {
+    const notafiscalId = this.route.snapshot.paramMap.get('id');
+
+    if (notafiscalId) {
+      this.notafiscalService
+        .listaNotafiscalPorId(Number(notafiscalId))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (notafiscal) => {
+            this.setNotafiscal(
+              notafiscal.numero,
+              notafiscal.datahora,
+              notafiscal.valortotalnota
+                ? Number(notafiscal.valortotalnota)
+                : 0,
+              notafiscal.endereco.cep,
+              notafiscal.endereco.logradouro,
+              notafiscal.endereco.complemento,
+              notafiscal.endereco.bairro,
+              notafiscal.endereco.localidade,
+              notafiscal.endereco.uf,
+              notafiscal.endereco.numero,
+              notafiscal.fornecedor,
+              Array.isArray(notafiscal.itens)
+                ? notafiscal.itens
+                : [notafiscal.itens]
+            );
+            this.notafiscalAction = {
+              event: NotafiscalEvent.EDIT_NOTAFISCAL_ACTION,
+            };
+          },
+          error: (err) => {
+            this.mensagemService.mensagemErro(err);
+          },
+        });
+    } else {
+      this.notafiscalAction = { event: NotafiscalEvent.ADD_NOTAFISCAL_ACTION };
+    }
+  }
+
+  editaNotafiscal() {
+    this.notafiscalService
+      .atualizarNotafiscal(Number(this.notafiscalId), this.notafiscalData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.mensagemService.mensagemRegistroAlterado();
+          this.router.navigate(['/notafiscal/historico']);
+        },
+        error: (err) => {
+          this.mensagemService.mensagemErro(err);
+        },
+      });
+  }
+
+  incluiNotaFiscal(){
+    this.notafiscalService
+    .criarNotafiscal(this.notafiscalData)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: () => {
+        this.mensagemService.mensagemRegistroIncluido();
+        this.notafiscalForm.reset();
+        this.itens = [];
+      },
+      error: (err) => {
+        this.mensagemService.mensagemErro(err);
+      },
+    });
   }
 
   ngOnDestroy(): void {

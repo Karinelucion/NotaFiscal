@@ -4,37 +4,35 @@ import javax.enterprise.context.RequestScoped;
 import io.github.karinelucion.serverapi.fornecedor.dto.FornecedorRequest;
 import io.github.karinelucion.serverapi.error.ResponseError;
 import io.github.karinelucion.serverapi.fornecedor.enums.SituacaoFornecedorEnum;
-import io.github.karinelucion.serverapi.produto.Produto;
+import io.github.karinelucion.serverapi.fornecedor.validacoes.ValidacaoFornecedor;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import javax.ws.rs.core.Response;
-import java.util.Set;
 import java.util.List;
 
 @RequestScoped
 public class FornecedorResource {
     private FornecedorRepository repository;
-    private Validator validator;
+    private final ValidacaoFornecedor validacaoFornecedor;
+
 
     @Inject
-    public FornecedorResource(FornecedorRepository repository, Validator validator){
+    public FornecedorResource(FornecedorRepository repository, ValidacaoFornecedor validacaoFornecedor){
         this.repository = repository;
-        this.validator = validator;
+        this.validacaoFornecedor = validacaoFornecedor;
     }
 
     @Transactional
     public Response criar(FornecedorRequest fornecedorRequest){
-        Set<ConstraintViolation<FornecedorRequest>> violations = validator.validate(fornecedorRequest);
+        Fornecedor fornecedor = new Fornecedor();
+        ResponseError responseError = validacaoFornecedor.validarPersistenciaFornecedor(fornecedorRequest, fornecedor.getId());
 
-        if(!violations.isEmpty()){
-            return ResponseError.validaCriacaoDoForm(violations)
-                    .comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+
+        if (responseError != null) {
+            return responseError.comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
         }
 
-        Fornecedor fornecedor = new Fornecedor();
         fornecedor.setRazaosocial(fornecedorRequest.getRazaosocial());
         fornecedor.setEmail(fornecedorRequest.getEmail());
         fornecedor.setCnpj(fornecedorRequest.getCnpj());
@@ -68,21 +66,31 @@ public class FornecedorResource {
     @Transactional
     public Response deletarFornecedor(Long id){
         Fornecedor fornecedor = repository.findById(id);
+        if (fornecedor != null) {
+            ResponseError responseError = validacaoFornecedor.validarExclusaoFornecedor(id);
 
-        if(fornecedor != null){
-            repository.delete(fornecedor);
-            return Response.noContent().build();
+            if (responseError != null) {
+                return responseError.comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+            }
+
+            try {
+                repository.delete(fornecedor);
+                return Response.noContent().build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
         }
+
         return Response.status(Response.Status.NOT_FOUND).build();
+
     }
 
     @Transactional
     public Response atualizarFornecedor(Long id, FornecedorRequest fornecedorRequest){
-        Set<ConstraintViolation<FornecedorRequest>> violations = validator.validate(fornecedorRequest);
-
-        if(!violations.isEmpty()){
-            return ResponseError.validaCriacaoDoForm(violations)
-                    .comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
+        ResponseError responseError = validacaoFornecedor.validarPersistenciaFornecedor(fornecedorRequest, id);
+        if (responseError != null) {
+            return responseError.comStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
         }
 
         Fornecedor fornecedor = repository.findById(id);

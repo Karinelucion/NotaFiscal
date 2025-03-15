@@ -47,7 +47,7 @@
           ></p-dropdown>
         </div>
         <div class="input-container col-2">
-          <label for="datahora"
+          <label for="valortotalnota"
             >Valor total<span [ngStyle]="{ color: 'var(--red-700)' }"
               >*</span
             ></label
@@ -58,6 +58,7 @@
             currency="BRL"
             locale="pt-BR"
             placeholder="R$"
+            [disabled]="true"
           ></p-inputNumber>
         </div>
       </div>
@@ -177,6 +178,7 @@
           locale="pt-BR"
           placeholder="R$"
           [max]="9999999"
+          [disabled]="true"
         ></p-inputNumber>
       </div>
     </div>
@@ -220,7 +222,7 @@
         label="Salvar edicao"
         icon="pi pi-check"
         class="p-button-warning p-button-outlined"
-        (click)="salvarEdicao()"
+        (click)="salvarEdicaoItem()"
       ></button>
     </div>
   </div>
@@ -280,7 +282,7 @@
 
     <ng-template pTemplate="emptymessage" let-columns>
       <tr>
-        <td [attr.colspan]="5">Nao ha itens adicionados</td>
+        <td [attr.colspan]="5">Não há itens adicionados</td>
       </tr>
     </ng-template>
   </p-table>

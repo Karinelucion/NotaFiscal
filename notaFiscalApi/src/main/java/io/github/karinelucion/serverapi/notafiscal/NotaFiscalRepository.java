@@ -1,12 +1,17 @@
 package io.github.karinelucion.serverapi.notafiscal;
 
+import io.github.karinelucion.serverapi.crud.CrudRepository;
+import io.github.karinelucion.serverapi.fornecedor.Fornecedor;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 
 import javax.enterprise.context.RequestScoped;
+import java.util.List;
 
 @RequestScoped
-public class NotaFiscalRepository implements PanacheRepository<NotaFiscal> {
-    public NotaFiscal findByIdWithItens(Long id) {
-        return find("SELECT n FROM NotaFiscal n LEFT JOIN FETCH n.itens WHERE n.id = ?1", id).firstResult();
+public class NotaFiscalRepository extends CrudRepository<NotaFiscal> {
+
+
+    public List<NotaFiscal> buscarPorNumero(String numero) {
+        return buscarPorValorExato("numero", numero);
     }
 }

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { NotafiscalService } from '../../../service/notafiscal.service';
 import { GetNotafiscalResponse } from '../../../model/GetNotafiscalResponse';
 import { DeleteNotafiscalAction } from '../../../model/event/DeleteNotafiscalAction';
+import { MensagemtoastService } from 'src/app/utils/mensagemtoast/mensagemtoast.service';
 
 @Component({
   selector: 'app-historico-home',
@@ -17,13 +18,17 @@ export class HistoricoHomeComponent implements OnDestroy, OnInit {
 
   constructor(
     private notafiscalService: NotafiscalService,
-    private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private mensagemService: MensagemtoastService
+  ) {
+    
+  }
 
   ngOnInit(): void {
     this.getAllNotasfiscais();
+
+
   }
 
   getAllNotasfiscais() {
@@ -38,12 +43,7 @@ export class HistoricoHomeComponent implements OnDestroy, OnInit {
         },
         error: (err) => {
           console.log(err);
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Erro ao buscar notas fiscais',
-            life: 3000,
-          });
+          this.mensagemService.mensagemErroAoBuscar()
           this.router.navigate(['/']);
         },
       });
@@ -70,22 +70,13 @@ export class HistoricoHomeComponent implements OnDestroy, OnInit {
         .subscribe({
           next: (response) => {
             this.getAllNotasfiscais();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Sucesso',
-              detail: 'Nota fiscal removida com sucesso!',
-              life: 3000,
-            });
+            this.mensagemService.mensagemSucessoAoRemover()
+
           },
           error: (err) => {
             console.log(err);
             this.getAllNotasfiscais();
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro',
-              detail: 'Erro ao deletar notas fiscais',
-              life: 3000,
-            });
+            this.mensagemService.mensagemErro(err)
           },
         });
         this.getAllNotasfiscais();

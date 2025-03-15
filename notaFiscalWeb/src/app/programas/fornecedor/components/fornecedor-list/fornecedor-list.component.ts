@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { FornecedorService } from '../../service/fornecedor.service';
+import { Situacao } from '../../model/fornecedor.model';
 
 @Component({
   selector: 'app-fornecedor-list',
@@ -21,6 +22,7 @@ export class FornecedorListComponent{
 
   public fornecedorSelecionado!: GetFornecedorResponse;
   controlePesquisa = new FormControl('');
+  private situacaoEnum = Situacao;
 
   constructor(
     public router: Router,
@@ -45,4 +47,7 @@ export class FornecedorListComponent{
   editarFornecedor(id: string) {
     this.router.navigate(['/fornecedor/editar', id]);
   }
+
+  getSituacaoLabel(situacao: string): string {
+    return Situacao[situacao as keyof typeof Situacao] || situacao;  }
 }

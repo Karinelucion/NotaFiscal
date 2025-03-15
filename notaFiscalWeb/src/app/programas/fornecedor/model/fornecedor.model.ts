@@ -15,3 +15,9 @@ export interface Fornecedor {
   databaixa: Date;
   situacao: string;
 }
+
+export enum Situacao {
+  ATIVO = 'Ativo',
+  BAIXADO = 'Baixado',
+  SUSPENSO = 'Suspenso'
+}
