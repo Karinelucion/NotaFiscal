@@ -47,5 +47,5 @@ O front-end estará disponível em http://localhost:4200.
 ### 5. Acessando a Documentação da API
 A documentação Swagger da API estará disponível em:
 ```
-[http://localhost:8080/swagger-ui](http://localhost:8080/q/swagger-ui/)
+http://localhost:8080/q/swagger-ui/
 ```
