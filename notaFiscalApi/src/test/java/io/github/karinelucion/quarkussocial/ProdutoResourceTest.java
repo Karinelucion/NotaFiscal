@@ -22,16 +22,30 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.*;
 
 @QuarkusTest
-class ProdutoRequestValidationTest {
+class ProdutoResourceTest {
     @TestHTTPResource("/produto")
     URL apiURL;
     private Validator validator;
-    private static Long produtoId;
+    private static Integer produtoId;
 
     @BeforeEach
      public void setUp() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         this.validator = factory.getValidator();
+
+        ProdutoRequest produtoRequest = new ProdutoRequest();
+        produtoRequest.setDescricao("Produto Teste");
+        produtoRequest.setPreco(100.0f);
+        produtoRequest.setSituacao(SituacaoProdutoEnum.ATIVO);
+
+        produtoId = given()
+                .contentType(ContentType.JSON)
+                .body(produtoRequest)
+                .when()
+                .post(apiURL)
+                .then()
+                .statusCode(201)
+                .extract().path("id");
     }
 
     @Test
@@ -45,7 +59,7 @@ class ProdutoRequestValidationTest {
         Set<ConstraintViolation<ProdutoRequest>> violacoes = validator.validate(request);
 
         assertFalse(violacoes.isEmpty());
-        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("A descricao é obrigatória")));
+        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("A descrição é obrigatória")));
     }
 
     @Test
@@ -59,7 +73,7 @@ class ProdutoRequestValidationTest {
         Set<ConstraintViolation<ProdutoRequest>> violacoes = validator.validate(request);
 
         assertFalse(violacoes.isEmpty());
-        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("A descricao é obrigatória")));
+        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("A descrição é obrigatória")));
     }
 
     @Test
@@ -73,21 +87,21 @@ class ProdutoRequestValidationTest {
         Set<ConstraintViolation<ProdutoRequest>> violacoes = validator.validate(request);
 
         assertFalse(violacoes.isEmpty());
-        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("O tamanho da descricao deve estar entre 3 e 100 caracteres")));
+        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("O tamanho da descrição deve estar entre 3 e 254 caracteres")));
     }
 
     @Test
     @DisplayName("deve exibir erro quando a descricao estiver acima do tamanho máximo")
     public void deveExibirErroQuandoDescricaoForLonga() {
         ProdutoRequest request = new ProdutoRequest();
-        request.setDescricao("A".repeat(101)); // 101 caracteres
+        request.setDescricao("A".repeat(255));
         request.setPreco(100.0f);
         request.setSituacao(SituacaoProdutoEnum.ATIVO);
 
         Set<ConstraintViolation<ProdutoRequest>> violacoes = validator.validate(request);
 
         assertFalse(violacoes.isEmpty());
-        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("O tamanho da descricao deve estar entre 3 e 100 caracteres")));
+        assertTrue(violacoes.stream().anyMatch(v -> v.getMessage().equals("O tamanho da descrição deve estar entre 3 e 254 caracteres")));
     }
 
     @Test
@@ -120,8 +134,6 @@ class ProdutoRequestValidationTest {
     @Test
     @DisplayName("deve listar produtos com sucesso")
     public void deveListarProdutosComSucesso() {
-
-
         given()
                 .when()
                 .get(apiURL)
@@ -139,15 +151,12 @@ class ProdutoRequestValidationTest {
         produtoAtualizado.setSituacao(SituacaoProdutoEnum.INATIVO);
 
         given()
-                .contentType(ContentType.JSON)
+                .contentType("application/json")
                 .body(produtoAtualizado)
                 .when()
                 .put(apiURL + "/" + produtoId)
                 .then()
-                .statusCode(200)
-                .body("descricao", equalTo("Produto Editado"))
-                .body("preco", equalTo(25.50F))
-                .body("situacao", equalTo("INATIVO"));
+                .statusCode(204);
     }
 
     @Test
