@@ -1,0 +1,109 @@
+<div class="grid">
+  <div class="col-12">
+    <p-card styleClass="shadow-3 m-5 text-indigo-800" header="Produtos">
+      <div class="mb-3 flex align-items-center gap-3">
+        <label for="pesquisa">Buscar Produto:</label>
+        <input id="pesquisa" pInputText [formControl]="controlePesquisa" class="w-30rem p-2" placeholder="Digite o nome do produto para pesquisa..." />
+      </div>
+
+      <p-table
+        [value]="produtos"
+        [(selection)]="produtoSelecionado"
+        [rows]="10"
+        [paginator]="true"
+        [responsive]="true"
+        [tableStyle]="{ 'min-width': '100%' }"
+        [rowHover]="true"
+        dataKey="id"
+        currentPageReportTemplate="Exibindo {first} a {last} de {totalRecords} produtos"
+        [showCurrentPageReport]="true"
+        sortField="id"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id">
+              ID
+              <p-sortIcon field="id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="descricao">
+              Nome
+              <p-sortIcon field="descricao"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="descricao"
+                display="menu"
+                matchMode="contains"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th pSortableColumn="preco">
+              Preço
+              <p-sortIcon field="preco"></p-sortIcon>
+              <p-columnFilter
+                type="numeric"
+                field="preco"
+                display="menu"
+                matchMode="equals"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th pSortableColumn="situacao">
+              Situação
+              <p-sortIcon field="situacao"></p-sortIcon>
+              <p-columnFilter
+                type="text"
+                field="situacao"
+                display="menu"
+                matchMode="contains"
+                [showMatchModes]="false"
+                [showOperator]="false"
+                [showAddButton]="false"
+              ></p-columnFilter>
+            </th>
+            <th class="text-center">
+              <p-button label="Novo Produto" icon="pi pi-plus" routerLink="/produto/novo"></p-button>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-produto>
+          <tr>
+            <td>{{ produto?.id }}</td>
+            <td>{{ produto?.descricao }}</td>
+            <td>{{ produto?.preco ? (produto.preco | currency:'BRL':'symbol':'1.2-2') : '-' }}</td>
+            <td>{{ produto?.situacao === 'ATIVO' ? 'Ativo' : 'Inativo'}}</td>
+            <td class="text-center">
+              <div class="flex gap-2 justify-content-center align-items-center">
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-warning"
+                  (click)="editarProduto(produto.id)"
+                ></button>
+                <button
+                  pButton
+                  pRipple
+                  icon="pi pi-trash"
+                  class="p-button-rounded p-button-danger"
+                  (click)="handleDeleteProdutoEvent(produto?.id, produto?.descricao)"
+                ></button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage" let-columns>
+          <tr>
+            <td [attr.colspan]="5">Não há produtos cadastrados</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  </div>
+  <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+</div>
